@@ -26,6 +26,9 @@ export default function Header() {
             <Link href="/about" className={styles.navLink}>
               Giới thiệu
             </Link>
+            <Link href="/services" className={styles.navLink}>
+              Dịch vụ
+            </Link>
             <Link href="/contact" className={styles.navLink}>
               Liên hệ
             </Link>
@@ -33,9 +36,9 @@ export default function Header() {
 
           {/* User Menu */}
           <div className={styles.userMenu}>
-            <button className={styles.loginButton}>
+            <Link href="/login" className={styles.loginButton}>
               Đăng nhập
-            </button>
+            </Link>
           </div>
         </div>
       </div>

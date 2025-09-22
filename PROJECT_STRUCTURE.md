@@ -2,41 +2,40 @@
 
 ## 📁 Project Structure
 
+# Next.js Project - Clean React Structure
+
+## 📁 Project Structure
+
 ```
 src/
 ├── pages/              # Next.js Pages Router
 │   ├── _app.js        # App wrapper
-│   ├── index.js       # Home page
-│   ├── about.js       # About page
-│   └── contact.js     # Contact page
+│   ├── index.js       # Home page (/)
+│   ├── about.js       # About page (/about)
+│   ├── contact.js     # Contact page (/contact)
+│   └── services.js    # Services page (/services)
 ├── components/         # React Components
 │   ├── Header.js      # Header component
 │   ├── Footer.js      # Footer component
-│   ├── ContactForm.js # Contact form component
-│   ├── layout/        # Layout components
-│   └── ui/            # UI components
+│   └── ContactForm.js # Contact form component
 ├── hooks/             # Custom React Hooks
 │   ├── useContact.js  # Contact form logic
-│   ├── useContactForm.js
-│   └── useLocalStorage.js
+│   └── useLocalStorage.js # Local storage hook
 ├── api/               # API Utilities
-│   ├── contact.js     # Contact API functions
-│   └── services/      # API services
+│   └── contact.js     # Contact API functions
 ├── lib/               # Shared Libraries
 │   ├── api.js         # Base API utilities
 │   └── constants.js   # Shared constants
 ├── utils/             # Utility Functions
-│   ├── validation.js  # Validation helpers
-│   ├── helpers.js     # General helpers
-│   └── fetchData.js   # Data fetching
-├── styles/            # CSS Modules & Global Styles
-│   ├── globals.css    # Global styles
-│   ├── Home.module.css
-│   ├── Contact.module.css
-│   └── Header.module.css
-├── context/           # React Context
-├── models/            # Data Models
-└── views/             # Legacy views (to be cleaned)
+│   └── validation.js  # Validation helpers
+└── styles/            # CSS Modules & Global Styles
+    ├── globals.css    # Global styles
+    ├── Home.module.css
+    ├── About.module.css
+    ├── Contact.module.css
+    ├── Services.module.css
+    ├── Header.module.css
+    └── Footer.module.css
 ```
 
 ## ✅ Standard React Patterns Applied

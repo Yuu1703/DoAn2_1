@@ -1,0 +1,109 @@
+/* CSS Module cho Header */
+
+.header {
+  background: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 4rem;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.logo a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.logoIcon {
+  width: 2rem;
+  height: 2rem;
+  background: #3182ce;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 0.875rem;
+}
+
+.logoText {
+  font-weight: bold;
+  color: #1a202c;
+  font-size: 1.25rem;
+}
+
+.navigation {
+  display: flex;
+  gap: 2rem;
+}
+
+.navLink {
+  color: #4a5568;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.navLink:hover {
+  color: #3182ce;
+  text-decoration: none;
+}
+
+.userMenu {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.loginButton {
+  background: #3182ce;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.loginButton:hover {
+  background: #2c5aa0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .navigation {
+    display: none;
+  }
+  
+  .logoText {
+    font-size: 1.1rem;
+  }
+  
+  .loginButton {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.875rem;
+  }
+}

@@ -1,36 +1,134 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js Project
 
-## Getting Started
+Đây là dự án web được xây dựng bằng [Next.js](https://nextjs.org) với JavaScript và Tailwind CSS.
 
-First, run the development server:
+## Công nghệ sử dụng
 
+- **Framework**: Next.js 15 (App Router)
+- **Ngôn ngữ**: JavaScript (ES6+)
+- **Styling**: Tailwind CSS
+- **Linting**: ESLint
+- **Package Manager**: npm
+
+## Cách chạy dự án
+
+Cài đặt dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Chạy development server:
+```bash
+npm run dev
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Mở [http://localhost:3000](http://localhost:3000) để xem kết quả.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Bạn có thể bắt đầu chỉnh sửa bằng cách sửa file `src/app/page.js`. Trang sẽ tự động cập nhật khi bạn lưu file.
 
-## Learn More
+## Cấu trúc dự án
 
-To learn more about Next.js, take a look at the following resources:
+```
+my-nextjs-project/
+├── public/                     # Các tệp tài nguyên tĩnh
+│   ├── images/                 # Thư mục chứa các hình ảnh
+│   │   └── logo-placeholder.txt # Placeholder cho logo
+│   └── favicon.ico             # Biểu tượng favicon
+├── src/
+│   ├── components/             # Các component React dùng lại
+│   │   ├── Header.js           # Component Header
+│   │   └── Footer.js           # Component Footer
+│   ├── pages/                  # Các trang (Pages Router)
+│   │   ├── _app.js             # Custom App component
+│   │   ├── index.js            # Trang chủ (home)
+│   │   ├── about.js            # Trang về (about)
+│   │   └── contact.js          # Trang liên hệ (contact)
+│   ├── styles/                 # Các tệp CSS, CSS Modules
+│   │   ├── globals.css         # Kiểu chung (global styles)
+│   │   ├── Header.module.css   # CSS module cho Header
+│   │   ├── Footer.module.css   # CSS module cho Footer
+│   │   ├── Home.module.css     # CSS module cho trang Home
+│   │   ├── About.module.css    # CSS module cho trang About
+│   │   └── Contact.module.css  # CSS module cho trang Contact
+│   ├── utils/                  # Các hàm tiện ích chung
+│   │   ├── fetchData.js        # Hàm fetch data từ API
+│   │   ├── helpers.js          # Các hàm helper
+│   │   └── index.js            # Export utilities
+│   ├── services/               # API services
+│   │   └── apiService.js       # HTTP client
+│   ├── models/                 # Data models
+│   │   └── User.js             # User model
+│   ├── hooks/                  # Custom React Hooks
+│   │   └── useLocalStorage.js  # localStorage hook
+│   ├── context/                # React Context
+│   │   └── AppContext.js       # App state management
+│   ├── config/                 # Configuration files
+│   │   └── app.js              # App configuration
+│   └── lib/                    # External libraries setup
+├── .gitignore                  # Git ignore file
+├── package.json                # Dependencies và scripts
+├── next.config.js              # Cấu hình Next.js
+├── jsconfig.json               # JavaScript configuration
+└── README.md                   # Tài liệu dự án
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Cách phát triển
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 1. Tạo Components mới
+```bash
+# Tạo component trong thư mục ui
+touch src/components/ui/NewComponent.js
 
-## Deploy on Vercel
+# Tạo layout component
+touch src/components/layout/NewLayout.js
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 2. Tạo Pages mới
+```bash
+# Tạo view mới
+touch src/views/NewView.js
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Tạo page trong app router
+mkdir src/app/new-page
+touch src/app/new-page/page.js
+```
+
+### 3. Thêm API Services
+```bash
+# Tạo service mới
+touch src/services/newService.js
+```
+
+### 4. Tạo Custom Hooks
+```bash
+# Tạo hook mới
+touch src/hooks/useNewHook.js
+```
+
+## Quy tắc code
+
+- **Components**: Sử dụng PascalCase (VD: `Button.js`)
+- **Files**: Sử dụng camelCase (VD: `apiService.js`)
+- **Folders**: Sử dụng kebab-case (VD: `new-feature/`)
+- **Imports**: Sử dụng absolute imports với `@/` prefix
+
+## Scripts có sẵn
+
+- `npm run dev` - Chạy development server
+- `npm run build` - Build dự án cho production
+- `npm run start` - Chạy production server
+- `npm run lint` - Chạy ESLint
+
+## Tìm hiểu thêm
+
+Để tìm hiểu thêm về Next.js:
+
+- [Next.js Documentation](https://nextjs.org/docs) - tìm hiểu về tính năng và API của Next.js
+- [Learn Next.js](https://nextjs.org/learn) - tutorial tương tác về Next.js
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs) - tài liệu về Tailwind CSS
+
+## Deploy
+
+Cách dễ nhất để deploy ứng dụng Next.js là sử dụng [Vercel Platform](https://vercel.com/new).
+
+Xem thêm [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) để biết chi tiết.

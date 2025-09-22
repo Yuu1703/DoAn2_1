@@ -1,0 +1,95 @@
+/* CSS Module cho Footer */
+
+.footer {
+  background: #1a202c;
+  color: white;
+  margin-top: auto;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 1rem;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 2rem;
+}
+
+.companyInfo {
+  grid-column: span 2;
+}
+
+.companyName {
+  font-size: 1.125rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.companyDescription {
+  color: #a0aec0;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.copyright {
+  color: #a0aec0;
+  font-size: 0.875rem;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+}
+
+.sectionTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #cbd5e0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+}
+
+.linkList,
+.contactList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.linkList li,
+.contactList li {
+  margin-bottom: 0.5rem;
+}
+
+.link {
+  color: #a0aec0;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.link:hover {
+  color: white;
+  text-decoration: none;
+}
+
+.contactList li {
+  color: #a0aec0;
+  font-size: 0.875rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    text-align: center;
+  }
+  
+  .container {
+    padding: 2rem 1rem;
+  }
+}

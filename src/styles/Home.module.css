@@ -1,74 +1,97 @@
-/* CSS Module cho trang Home */
-
-.main {
-  min-height: calc(100vh - 120px);
-  padding: 2rem 0;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+.hero {
+  position: relative;
+  height: 100vh;
+  background: url("/home/1.png") center center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
+.overlay {
+  background: rgba(0, 0, 0, 0.4); /* lớp phủ tối */
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.content {
+  color: white;
   text-align: center;
+  max-width: 900px;
+  padding: 0 1rem;
 }
 
 .title {
   font-size: 3rem;
   font-weight: 700;
-  margin-bottom: 1.5rem;
-  color: #1a202c;
+  margin-bottom: 1rem;
   line-height: 1.2;
 }
 
 .highlight {
-  color: #3182ce;
-  background: linear-gradient(45deg, #3182ce, #63b3ed);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #f59e0b; /* cam vàng */
 }
 
-.description {
+.subtitle {
   font-size: 1.25rem;
-  color: #4a5568;
+  margin-bottom: 2rem;
+  color: #f3f4f6;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
   margin-bottom: 3rem;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  margin-top: 3rem;
-}
-
-.card {
-  background: white;
-  padding: 2rem;
-  border-radius: 1rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border: 1px solid #e2e8f0;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-}
-
-.card h2 {
-  font-size: 1.5rem;
+.primaryBtn {
+  background: #166534;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
   font-weight: 600;
-  margin-bottom: 1rem;
-  color: #2d3748;
+  text-decoration: none;
+  transition: background 0.3s ease;
 }
 
-.card p {
-  color: #4a5568;
-  line-height: 1.6;
+.primaryBtn:hover {
+  background: #14532d;
+}
+
+.secondaryBtn {
+  border: 2px solid white;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.secondaryBtn:hover {
+  background: white;
+  color: #111827;
+}
+
+.stats {
+  display: flex;
+  justify-content: center;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+}
+
+.stats h2 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.stats p {
+  margin-top: 0.25rem;
+  font-size: 1rem;
+  color: #e5e7eb;
 }
 
 /* Responsive */
@@ -76,13 +99,10 @@
   .title {
     font-size: 2rem;
   }
-  
-  .description {
-    font-size: 1.1rem;
+  .subtitle {
+    font-size: 1rem;
   }
-  
-  .grid {
-    grid-template-columns: 1fr;
+  .stats {
     gap: 1.5rem;
   }
 }

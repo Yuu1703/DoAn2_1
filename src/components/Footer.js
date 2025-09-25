@@ -1,57 +1,78 @@
-/**
- * Footer Component - Phần footer của ứng dụng
- */
-
-import styles from '../styles/Footer.module.css';
+import styles from "@/styles/Footer.module.css";
+import { MapPin, Facebook, Instagram, Youtube, Mail } from "lucide-react";
 
 export default function Footer() {
   return (
     <footer className={styles.footer}>
       <div className={styles.container}>
-        <div className={styles.content}>
-          {/* Company Info */}
-          <div className={styles.companyInfo}>
-            <h3 className={styles.companyName}>DoAn2_3</h3>
-            <p className={styles.companyDescription}>
-              Ứng dụng web hiện đại được xây dựng bằng Next.js
-            </p>
-            <p className={styles.copyright}>
-              © 2025 DoAn2_3. Tất cả quyền được bảo lưu.
-            </p>
+        {/* Left: Logo + intro */}
+        <div className={styles.brand}>
+          <div className={styles.logo}>
+            <MapPin size={20} />
+            <span className={styles.logoText}>VietJourney</span>
           </div>
-
-          {/* Quick Links */}
-          <div className={styles.section}>
-            <h4 className={styles.sectionTitle}>Liên kết nhanh</h4>
-            <ul className={styles.linkList}>
-              <li>
-                <a href="/" className={styles.link}>
-                  Trang chủ
-                </a>
-              </li>
-              <li>
-                <a href="/about" className={styles.link}>
-                  Giới thiệu
-                </a>
-              </li>
-              <li>
-                <a href="/contact" className={styles.link}>
-                  Liên hệ
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contact Info */}
-          <div className={styles.section}>
-            <h4 className={styles.sectionTitle}>Liên hệ</h4>
-            <ul className={styles.contactList}>
-              <li>Email: contact@doan23.com</li>
-              <li>Phone: +84 123 456 789</li>
-              <li>Address: Việt Nam</li>
-            </ul>
+          <p className={styles.description}>
+            Nền tảng chia sẻ và lập kế hoạch du lịch Việt Nam. Khám phá vẻ đẹp
+            đất nước cùng cộng đồng du lịch sôi động.
+          </p>
+          <div className={styles.socials}>
+            <a href="#">
+              <Facebook size={20} />
+            </a>
+            <a href="#">
+              <Instagram size={20} />
+            </a>
+            <a href="#">
+              <Youtube size={20} />
+            </a>
+            <a href="#">
+              <Mail size={20} />
+            </a>
           </div>
         </div>
+
+        {/* Middle: Quick Links */}
+        <div className={styles.links}>
+          <h4>Liên kết nhanh</h4>
+          <ul>
+            <li>
+              <a href="#">Điểm đến</a>
+            </li>
+            <li>
+              <a href="#">Đánh giá</a>
+            </li>
+            <li>
+              <a href="#">Lập kế hoạch</a>
+            </li>
+            <li>
+              <a href="#">Cộng đồng</a>
+            </li>
+          </ul>
+        </div>
+
+        {/* Right: Support */}
+        <div className={styles.links}>
+          <h4>Hỗ trợ</h4>
+          <ul>
+            <li>
+              <a href="#">Trung tâm trợ giúp</a>
+            </li>
+            <li>
+              <a href="#">Liên hệ</a>
+            </li>
+            <li>
+              <a href="#">Điều khoản</a>
+            </li>
+            <li>
+              <a href="#">Bảo mật</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Bottom */}
+      <div className={styles.bottom}>
+        <p>© 2025 VietJourney. Tất cả quyền được bảo lưu.</p>
       </div>
     </footer>
   );

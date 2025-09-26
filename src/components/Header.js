@@ -29,6 +29,9 @@ export default function Header() {
             <Link href="/services" className={styles.navLink}>
               Dịch vụ
             </Link>
+            <Link href="/products" className={styles.navLink}>
+              Sản phẩm
+            </Link>
             <Link href="/contact" className={styles.navLink}>
               Liên hệ
             </Link>

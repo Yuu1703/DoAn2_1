@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>VietJourney - Khám phá Việt Nam cùng cộng đồng</title>
+        <title>Capyvivu - Khám phá Việt Nam cùng cộng đồng</title>
         <meta
           name="description"
           content="Chia sẻ trải nghiệm, khám phá địa điểm mới và lập kế hoạch cho chuyến đi hoàn hảo của bạn"

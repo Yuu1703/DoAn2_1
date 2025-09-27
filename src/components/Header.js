@@ -12,8 +12,12 @@ export default function Header() {
           {/* Logo */}
           <div className={styles.logo}>
             <Link href="/" className={styles.logoLink}>
-              <div className={styles.logoIcon}>VJ</div>
-              <span className={styles.logoText}>VietJourney</span>
+              <img 
+                src="/images/Logo Capyvivu - Thiết kế mới với bản đồ.jpg" 
+                alt="Capyvivu Logo" 
+                className={styles.logoImage}
+              />
+              <span className={styles.logoText}>Capyvivu</span>
             </Link>
           </div>
 

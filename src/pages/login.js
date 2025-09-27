@@ -7,8 +7,8 @@ export default function Login() {
   return (
     <>
       <Head>
-        <title>Đăng nhập - Travel Explorer</title>
-        <meta name="description" content="Đăng nhập để khám phá thế giới cùng chúng tôi" />
+        <title>Đăng nhập - Capyvivu</title>
+        <meta name="description" content="Đăng nhập để khám phá thế giới cùng Capyvivu" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
@@ -109,7 +109,7 @@ export default function Login() {
             </div>
 
             <div className={styles.signupLink}>
-               Mới tham gia Travel Explorer?{' '}
+               Mới tham gia Capyvivu?{' '}
               <a href="/register" className={styles.link}>
                 Tạo tài khoản mới 🎨
               </a>

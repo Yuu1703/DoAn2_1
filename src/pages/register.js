@@ -7,8 +7,8 @@ export default function Register() {
   return (
     <>
       <Head>
-        <title>Đăng ký - Travel Explorer</title>
-        <meta name="description" content="Tạo tài khoản để bắt đầu hành trình khám phá thế giới" />
+        <title>Đăng ký - Capyvivu</title>
+        <meta name="description" content="Tạo tài khoản mới để bắt đầu hành trình khám phá thế giới cùng Capyvivu" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 

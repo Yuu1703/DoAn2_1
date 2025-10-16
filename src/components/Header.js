@@ -23,7 +23,7 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className={styles.navigation}>
-            <Link href="#destinations" className={styles.navLink}>
+            <Link href="/destinations" className={styles.navLink}>
               Điểm đến
             </Link>
             <Link href="/reviews" className={styles.navLink}>

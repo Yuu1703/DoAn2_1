@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { MapPin, Star, ChevronLeft, ChevronRight } from 'lucide-react';
+import { MapPin, Star, ChevronLeft, ChevronRight, Heart } from 'lucide-react';
 import styles from '@/styles/ProductsDisplaySection.module.css';
 
 // HARDCODED DATA
@@ -168,6 +168,46 @@ export default function ProductsDisplaySection() {
   
   const [sortBy, setSortBy] = useState('featured');
   const [currentPage, setCurrentPage] = useState(1);
+  
+  // ===== THÊM CODE YÊU THÍCH =====
+  const [favorites, setFavorites] = useState([]);
+
+  // Load favorites
+  useEffect(() => {
+    const saved = localStorage.getItem('favorites');
+    if (saved) {
+      try {
+        setFavorites(JSON.parse(saved));
+      } catch (error) {
+        setFavorites([]);
+      }
+    }
+  }, []);
+
+  // Save favorites
+  useEffect(() => {
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+  }, [favorites]);
+
+  // Check if favorited
+  const isFavorite = (id) => favorites.includes(id);
+
+  // Toggle favorite
+  const handleToggleFavorite = (e, id) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const button = e.currentTarget;
+    button.classList.add(styles.heartBounce);
+    setTimeout(() => button.classList.remove(styles.heartBounce), 600);
+
+    setFavorites(prev => 
+      prev.includes(id) 
+        ? prev.filter(fav => fav !== id)
+        : [...prev, id]
+    );
+  };
+  // ===== KẾT THÚC CODE YÊU THÍCH =====
 
   // Listen to filters from other sections
   useEffect(() => {
@@ -298,6 +338,20 @@ export default function ProductsDisplaySection() {
             <Star className={styles.starIcon} size={14} />
             <span>{rating}</span>
           </div>
+
+          <button
+            className={`${styles.favoriteButton} ${isFavorite(data.id) ? styles.favoriteActive : ''}`}
+            onClick={(e) => handleToggleFavorite(e, data.id)}
+            title={isFavorite(data.id) ? 'Bỏ yêu thích' : 'Thêm vào yêu thích'}
+            >
+            <Heart 
+              size={20} 
+              fill={isFavorite(data.id) ? '#dc2626' : 'none'}
+              stroke={isFavorite(data.id) ? '#dc2626' : '#ffffff'}
+              strokeWidth={2}
+            />
+          </button>
+
         </div>
         
         <div className={styles.content}>

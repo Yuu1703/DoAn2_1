@@ -1,9 +1,42 @@
+import { useState } from 'react';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import styles from '../styles/Register.module.css';
 
 export default function Register() {
+  const router = useRouter();
+  const [form, setForm] = useState({ fullname: '', email: '', phone: '', password: '', confirmPassword: '' });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+
+  function update(key) {
+    return (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+    try {
+      const res = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.message || 'Đăng ký thất bại');
+      setSuccess('Đăng ký thành công! Bạn sẽ được chuyển đến trang đăng nhập.');
+      setTimeout(() => router.push('/login'), 800);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
   return (
     <>
       <Head>
@@ -42,7 +75,9 @@ export default function Register() {
               <p className={styles.subtitle}> Tạo tài khoản để bắt đầu hành trình khám phá thế giới</p>
             </div>
             
-            <form className={styles.form}>
+            <form className={styles.form} onSubmit={handleSubmit}>
+              {error && <div style={{ color: 'crimson', marginBottom: 12, textAlign: 'center' }}>{error}</div>}
+              {success && <div style={{ color: 'green', marginBottom: 12, textAlign: 'center' }}>{success}</div>}
               {/* Full Name Field */}
               <div className={styles.formGroup}>
                 <label htmlFor="fullname" className={styles.label}>
@@ -54,6 +89,8 @@ export default function Register() {
                   name="fullname"
                   className={styles.input}
                   placeholder="Nhập họ và tên của bạn"
+                  value={form.fullname}
+                  onChange={update('fullname')}
                   required
                 />
               </div>
@@ -68,7 +105,9 @@ export default function Register() {
                   id="email"
                   name="email"
                   className={styles.input}
-                  placeholder="your@email.com"
+                  placeholder="you@example.com"
+                  value={form.email}
+                  onChange={update('email')}
                   required
                 />
               </div>
@@ -84,7 +123,8 @@ export default function Register() {
                   name="phone"
                   className={styles.input}
                   placeholder="0123 456 789"
-                  required
+                  value={form.phone}
+                  onChange={update('phone')}
                 />
               </div>
 
@@ -99,6 +139,8 @@ export default function Register() {
                   name="password"
                   className={styles.input}
                   placeholder="Tạo mật khẩu mạnh"
+                  value={form.password}
+                  onChange={update('password')}
                   required
                 />
               </div>
@@ -114,6 +156,8 @@ export default function Register() {
                   name="confirmPassword"
                   className={styles.input}
                   placeholder="Nhập lại mật khẩu"
+                  value={form.confirmPassword}
+                  onChange={update('confirmPassword')}
                   required
                 />
               </div>
@@ -134,8 +178,8 @@ export default function Register() {
               </div>
 
               {/* Submit Button */}
-              <button type="submit" className={styles.submitButton}>
-                🚀 Tạo tài khoản và bắt đầu khám phá
+              <button type="submit" className={styles.submitButton} disabled={loading}>
+                {loading ? '⏳ Đang tạo tài khoản...' : '🚀 Tạo tài khoản và bắt đầu khám phá'}
               </button>
             </form>
 

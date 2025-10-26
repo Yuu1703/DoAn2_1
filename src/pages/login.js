@@ -1,9 +1,43 @@
+import { useState } from 'react';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import styles from '../styles/Login.module.css';
 
 export default function Login() {
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: email, password }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.message || 'Đăng nhập thất bại');
+      }
+
+      // successful -> go to dashboard
+      router.push('/dashboard');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <>
       <Head>
@@ -39,20 +73,24 @@ export default function Login() {
                 <span>🧳</span>
               </div>
               <h1 className={styles.title}>Chào mừng trở lại!</h1>
-              <p className={styles.subtitle}> Đăng nhập để tiếp tục hành trình khám phá thế giới</p>
+              <p className={styles.subtitle}>Đăng nhập để tiếp tục hành trình khám phá thế giới</p>
             </div>
             
-            <form className={styles.form}>
+            <form className={styles.form} onSubmit={handleSubmit}>
+              {error && <div style={{ color: 'crimson', marginBottom: 12, textAlign: 'center' }}>{error}</div>}
+              
               <div className={styles.formGroup}>
                 <label htmlFor="email" className={styles.label}>
-                  Email địa chỉ
+                  Email / Username
                 </label>
                 <input
-                  type="email"
+                  type="text"
                   id="email"
                   name="email"
                   className={styles.input}
-                  placeholder="your@email.com"
+                  placeholder="admin"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                 />
               </div>
@@ -66,7 +104,9 @@ export default function Login() {
                   id="password"
                   name="password"
                   className={styles.input}
-                  placeholder="Nhập mật khẩu của bạn"
+                  placeholder="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                 />
               </div>
@@ -87,8 +127,8 @@ export default function Login() {
                 </a>
               </div>
 
-              <button type="submit" className={styles.submitButton}>
-                🛫 Bắt đầu hành trình khám phá
+              <button type="submit" className={styles.submitButton} disabled={loading}>
+                {loading ? '⏳ Đang đăng nhập...' : '🛫 Bắt đầu hành trình khám phá'}
               </button>
             </form>
 
@@ -97,19 +137,19 @@ export default function Login() {
             </div>
 
             <div className={styles.socialLogin}>
-              <button className={styles.googleButton}>
+              <button className={styles.googleButton} type="button">
                 <span className={styles.socialIcon}>G</span> Google
               </button>
-              <button className={styles.facebookButton}>
+              <button className={styles.facebookButton} type="button">
                 <span className={styles.socialIcon}>f</span> Facebook
               </button>
-              <button className={styles.appleButton}>
+              <button className={styles.appleButton} type="button">
                 <img src="/images/apple-logo.png" alt="Apple" className={styles.appleIcon} /> Apple
               </button>
             </div>
 
             <div className={styles.signupLink}>
-               Mới tham gia Capyvivu?{' '}
+              Mới tham gia Capyvivu?{' '}
               <a href="/register" className={styles.link}>
                 Tạo tài khoản mới 🎨
               </a>
@@ -117,6 +157,10 @@ export default function Login() {
             
             <div className={styles.travelQuote}>
               "🏖️ Cuộc sống là một chuyến đi, hãy tận hưởng từng khoảnh khắc! "
+            </div>
+            
+            <div style={{ marginTop: '1rem', fontSize: '0.875rem', color: '#666', textAlign: 'center' }}>
+              Demo: <strong>admin / password</strong>
             </div>
           </div>
         </div>

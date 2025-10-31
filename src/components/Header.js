@@ -12,9 +12,9 @@ export default function Header() {
           {/* Logo */}
           <div className={styles.logo}>
             <Link href="/" className={styles.logoLink}>
-              <img 
-                src="/images/Logo Capyvivu - Thiết kế mới với bản đồ.jpg" 
-                alt="Capyvivu Logo" 
+              <img
+                src="/images/Logo Capyvivu - Thiết kế mới với bản đồ.jpg"
+                alt="Capyvivu Logo"
                 className={styles.logoImage}
               />
               <span className={styles.logoText}>Capyvivu</span>
@@ -58,8 +58,12 @@ export default function Header() {
 
           {/* Mobile Menu Button */}
           <button
+            type="button"
             className={`${styles.mobileMenuBtn} ${isOpen ? styles.open : ""}`}
             onClick={toggleMenu}
+            aria-expanded={isOpen}
+            aria-controls="mobile-navigation"
+            aria-label={isOpen ? "Đóng menu" : "Mở menu"}
           >
             <span className={styles.bar}></span>
             <span className={styles.bar}></span>
@@ -69,7 +73,7 @@ export default function Header() {
 
         {/* Mobile Dropdown */}
         {isOpen && (
-          <div className={styles.mobileNav}>
+          <div id="mobile-navigation" className={styles.mobileNav}>
             <Link href="/destinations" className={styles.navLink}>
               Điểm đến
             </Link>

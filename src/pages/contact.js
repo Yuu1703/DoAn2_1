@@ -3,22 +3,22 @@
  * Sử dụng custom hooks và shared utilities
  */
 
-import Head from 'next/head';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import ContactForm from '../components/ContactForm';
-import { useContact } from '../hooks/useContact';
-import styles from '../styles/Contact.module.css';
+import Head from "next/head";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import ContactForm from "../components/ContactForm";
+import { useContact } from "../hooks/useContact";
+import styles from "../styles/Contact.module.css";
 
 export default function Contact() {
   // Sử dụng custom hook theo React patterns
   const {
     formData,
-    isLoading,
+    isSubmitting,
     errors,
     handleInputChange,
     handleSubmit,
-    resetForm
+    resetForm,
   } = useContact();
 
   return (
@@ -35,7 +35,7 @@ export default function Contact() {
       <main className={styles.main}>
         <div className={styles.container}>
           <h1 className={styles.title}>Liên hệ với chúng tôi</h1>
-          
+
           <div className={styles.content}>
             {/* Contact Info - Static UI */}
             <div className={styles.contactInfo}>
@@ -50,7 +50,8 @@ export default function Contact() {
                 <strong>Địa chỉ:</strong> Việt Nam
               </div>
               <div className={styles.infoItem}>
-                <strong>Thời gian làm việc:</strong> 8:00 - 17:00 (Thứ 2 - Thứ 6)
+                <strong>Thời gian làm việc:</strong> 8:00 - 17:00 (Thứ 2 - Thứ
+                6)
               </div>
             </div>
 
@@ -58,7 +59,8 @@ export default function Contact() {
             <ContactForm
               formData={formData}
               errors={errors}
-              isLoading={isLoading}
+              // useContact exposes `isSubmitting` - alias to the prop name used by ContactForm
+              isLoading={isSubmitting}
               onInputChange={handleInputChange}
               onSubmit={handleSubmit}
               onReset={resetForm}

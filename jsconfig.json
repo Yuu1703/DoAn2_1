@@ -27,7 +27,8 @@
     "**/*.js",
     "**/*.jsx",
     ".next/types/**/*.js",
-    "src/components/sections/DestinationsSection.js"
+    "src/components/sections/DestinationsSection.js",
+    "next.config.js"
   ],
   "exclude": ["node_modules"]
 }

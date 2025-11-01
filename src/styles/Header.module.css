@@ -49,12 +49,12 @@
   font-weight: bold;
   color: #1a202c;
   font-size: 1.75rem;
-  font-family: 'Fredoka One', 'Pacifico', 'Righteous', 'Comic Sans MS', cursive;
-  background: linear-gradient(45deg, #FF6B6B, #4ECDC4, #45B7D1, #96CEB4);
+  font-family: "Fredoka One", "Pacifico", "Righteous", "Comic Sans MS", cursive;
+  background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
   letter-spacing: 0.5px;
   position: relative;
   transition: all 0.3s ease;
@@ -62,7 +62,7 @@
 
 .logoText:hover {
   transform: scale(1.05);
-  background: linear-gradient(45deg, #E74C3C, #3498DB, #9B59B6, #F39C12);
+  background: linear-gradient(45deg, #e74c3c, #3498db, #9b59b6, #f39c12);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

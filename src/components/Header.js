@@ -1,9 +1,21 @@
 import Link from "next/link";
 import { useMobileMenu } from "../hooks/useMobileMenu";
+import { useUser } from "@/context/UserContext"; // import context
 import styles from "@/styles/Header.module.css";
 
 export default function Header() {
   const { isOpen, toggleMenu } = useMobileMenu();
+  const { user, refresh } = useUser(); // lấy user và refresh để cập nhật sau logout
+
+  // Logout handler
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/logout", { method: "POST" });
+      await refresh(); // cập nhật context => user=null
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
+  };
 
   return (
     <header className={styles.header}>
@@ -48,12 +60,25 @@ export default function Header() {
 
           {/* Desktop User Menu */}
           <div className={styles.userMenu}>
-            <Link href="/login" className={styles.loginButton}>
-              Đăng nhập
-            </Link>
-            <Link href="/register" className={styles.registerButton}>
-              Đăng ký
-            </Link>
+            {user ? (
+              <>
+                <span className={styles.username}>
+                  Xin chào, {user.fullname}
+                </span>
+                <button onClick={handleLogout} className={styles.logoutButton}>
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/login" className={styles.loginButton}>
+                  Đăng nhập
+                </Link>
+                <Link href="/register" className={styles.registerButton}>
+                  Đăng ký
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -97,12 +122,26 @@ export default function Header() {
             </Link>
 
             <div className={styles.mobileUserMenu}>
-              <Link href="/login" className={styles.mobileLogin}>
-                Đăng nhập
-              </Link>
-              <Link href="/register" className={styles.mobileRegister}>
-                Đăng ký
-              </Link>
+              {user ? (
+                <>
+                  <span className={styles.mobileUsername}>{user.username}</span>
+                  <button
+                    onClick={handleLogout}
+                    className={styles.mobileLogoutButton}
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link href="/login" className={styles.mobileLogin}>
+                    Đăng nhập
+                  </Link>
+                  <Link href="/register" className={styles.mobileRegister}>
+                    Đăng ký
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         )}

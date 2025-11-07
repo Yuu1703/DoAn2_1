@@ -67,9 +67,11 @@ export default function Register() {
           <div className={styles.registerBox}>
             <div className={styles.registerHeader}>
               <div className={styles.travelIcon}>
-                <span>🌍</span>
-                <span>✈️</span>
-                <span>🧳</span>
+                <img
+                  src="/images/Logo Capyvivu - Thiết kế mới với bản đồ.jpg"
+                  alt="Capyvivu Logo"
+                  className={styles.logoHero}
+                />
               </div>
               <h1 className={styles.title}>Tham gia cùng chúng tôi!</h1>
               <p className={styles.subtitle}> Tạo tài khoản để bắt đầu hành trình khám phá thế giới</p>

@@ -73,9 +73,11 @@ export default function Login() {
           <div className={styles.loginBox}>
             <div className={styles.loginHeader}>
               <div className={styles.travelIcon}>
-                <span>🌍</span>
-                <span>✈️</span>
-                <span>🧳</span>
+                <img
+                  src="/images/Logo Capyvivu - Thiết kế mới với bản đồ.jpg"
+                  alt="Capyvivu Logo"
+                  className={styles.logoHero}
+                />
               </div>
               <h1 className={styles.title}>Chào mừng trở lại!</h1>
               <p className={styles.subtitle}>

@@ -222,6 +222,17 @@
   animation: bounce 2s ease-in-out infinite;
 }
 
+.logoHero {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 20px;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.15);
+  animation: iconFloat 3s ease-in-out infinite;
+  background: #fff;
+  padding: 4px;
+}
+
 .travelIcon span {
   animation: iconFloat 3s ease-in-out infinite;
 }

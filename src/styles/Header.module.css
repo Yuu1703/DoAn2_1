@@ -89,6 +89,87 @@
   gap: 1rem;
 }
 
+/* Account dropdown (desktop) */
+.accountWrapper {
+  position: relative;
+}
+
+.avatarButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 9999px;
+  background: #edf2f7;
+  border: 1px solid #cbd5e0;
+  cursor: pointer;
+}
+
+.avatarButton:hover {
+  background: #e2e8f0;
+}
+
+.avatarIcon {
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  width: 220px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  padding: 8px;
+  z-index: 50;
+}
+
+.userInfo {
+  padding: 8px;
+  border-bottom: 1px solid #edf2f7;
+  margin-bottom: 6px;
+}
+
+.userName {
+  font-weight: 600;
+  color: #1a202c;
+}
+
+.userEmail {
+  font-size: 12px;
+  color: #718096;
+}
+
+.menuItem,
+.menuItemDanger {
+  width: 100%;
+  display: block;
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #2d3748;
+}
+
+.menuItem:hover {
+  background: #f7fafc;
+}
+
+.menuItemDanger {
+  color: #e53e3e;
+}
+
+.menuItemDanger:hover {
+  background: #fff5f5;
+}
+
 .loginButton {
   padding: 0.4rem 0.9rem;
   border: 2px solid #3182ce;

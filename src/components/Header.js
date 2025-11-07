@@ -1,17 +1,42 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useEffect, useRef, useState } from "react";
 import { useMobileMenu } from "../hooks/useMobileMenu";
 import { useUser } from "@/context/UserContext"; // import context
 import styles from "@/styles/Header.module.css";
 
 export default function Header() {
+  const router = useRouter();
   const { isOpen, toggleMenu } = useMobileMenu();
   const { user, refresh } = useUser(); // lấy user và refresh để cập nhật sau logout
+  const [accountOpen, setAccountOpen] = useState(false);
+  const accountRef = useRef(null);
+
+  // Đóng dropdown khi click ra ngoài hoặc nhấn ESC
+  useEffect(() => {
+    function onClickOutside(e) {
+      if (accountRef.current && !accountRef.current.contains(e.target)) {
+        setAccountOpen(false);
+      }
+    }
+    function onKey(e) {
+      if (e.key === "Escape") setAccountOpen(false);
+    }
+    document.addEventListener("mousedown", onClickOutside);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onClickOutside);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, []);
 
   // Logout handler
   const handleLogout = async () => {
     try {
       await fetch("/api/logout", { method: "POST" });
       await refresh(); // cập nhật context => user=null
+      // Điều hướng về trang đăng nhập sau khi đăng xuất
+      router.replace("/login");
     } catch (err) {
       console.error("Logout failed:", err);
     }
@@ -61,14 +86,48 @@ export default function Header() {
           {/* Desktop User Menu */}
           <div className={styles.userMenu}>
             {user ? (
-              <>
-                <span className={styles.username}>
-                  Xin chào, {user.fullname}
-                </span>
-                <button onClick={handleLogout} className={styles.logoutButton}>
-                  Logout
+              <div className={styles.accountWrapper} ref={accountRef}>
+                <button
+                  type="button"
+                  className={styles.avatarButton}
+                  aria-haspopup="menu"
+                  aria-expanded={accountOpen}
+                  onClick={() => setAccountOpen((v) => !v)}
+                  title={user.fullname || user.username}
+                >
+                  <span className={styles.avatarIcon} aria-hidden>
+                    {/* Hiển thị chữ cái đầu làm avatar fallback */}
+                    {(user.fullname || user.username || "?")
+                      .toString()
+                      .trim()
+                      .charAt(0)
+                      .toUpperCase()}
+                  </span>
                 </button>
-              </>
+                {accountOpen && (
+                  <div className={styles.dropdown} role="menu">
+                    <div className={styles.userInfo}>
+                      <div className={styles.userName}>{user.fullname || user.username}</div>
+                      {user.email && (
+                        <div className={styles.userEmail}>{user.email}</div>
+                      )}
+                    </div>
+                    <Link href="/profile" className={styles.menuItem} role="menuitem" onClick={() => setAccountOpen(false)}>
+                      Xem thông tin
+                    </Link>
+                    <button
+                      className={styles.menuItemDanger}
+                      role="menuitem"
+                      onClick={() => {
+                        setAccountOpen(false);
+                        handleLogout();
+                      }}
+                    >
+                      Đăng xuất
+                    </button>
+                  </div>
+                )}
+              </div>
             ) : (
               <>
                 <Link href="/login" className={styles.loginButton}>

@@ -28,6 +28,11 @@ export default async function handler(req, res) {
       email: user.email,
       fullname: user.fullname,
       phone: user.phone,
+      dob: user.dob || null,
+      address: user.address || null,
+      bankAccount: user.bankAccount || null,
+      bankName: user.bankName || null,
+      gender: user.gender || null,
     };
 
     return res.status(200).json({ user: safeUser });

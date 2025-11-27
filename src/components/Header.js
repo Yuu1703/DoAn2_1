@@ -78,7 +78,7 @@ export default function Header() {
             <Link href="/community" className={styles.navLink}>
               Cộng đồng
             </Link>
-            <Link href="/search" className={styles.navLink}>
+            <Link href="/Post" className={styles.navLink}>
               Tìm kiếm
             </Link>
           </nav>
@@ -107,12 +107,19 @@ export default function Header() {
                 {accountOpen && (
                   <div className={styles.dropdown} role="menu">
                     <div className={styles.userInfo}>
-                      <div className={styles.userName}>{user.fullname || user.username}</div>
+                      <div className={styles.userName}>
+                        {user.fullname || user.username}
+                      </div>
                       {user.email && (
                         <div className={styles.userEmail}>{user.email}</div>
                       )}
                     </div>
-                    <Link href="/profile" className={styles.menuItem} role="menuitem" onClick={() => setAccountOpen(false)}>
+                    <Link
+                      href="/profile"
+                      className={styles.menuItem}
+                      role="menuitem"
+                      onClick={() => setAccountOpen(false)}
+                    >
                       Xem thông tin
                     </Link>
                     <button
@@ -176,7 +183,7 @@ export default function Header() {
             <Link href="/community" className={styles.navLink}>
               Cộng đồng
             </Link>
-            <Link href="/search" className={styles.navLink}>
+            <Link href="/Post" className={styles.navLink}>
               Tìm kiếm
             </Link>
 

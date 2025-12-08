@@ -1,6 +1,6 @@
 import { MongoClient } from 'mongodb'
 
-const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/DoAn2'
+const uri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/DoAn2'
 const options = {}
 
 if (!globalThis._mongoClientPromise) {

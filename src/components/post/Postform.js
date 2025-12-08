@@ -16,6 +16,7 @@ const PostForm = () => {
     openingHours: "",
     phoneNumber: "",
     website: "",
+    subcategory: "",
   });
 
   const [imagesPreviews, setImagesPreviews] = useState([]);
@@ -48,14 +49,96 @@ const PostForm = () => {
 
   const categories = [
     { value: "hotel", label: "Khách sạn", icon: "🏨" },
+    { value: "resort", label: "Resort", icon: "🏝️" },
+    { value: "homestay", label: "Homestay", icon: "🏡" },
+
     { value: "restaurant", label: "Quán ăn", icon: "🍽️" },
+    { value: "cafe", label: "Quán nước & Cafe", icon: "☕" },
+
+    { value: "tourist-attraction", label: "Điểm tham quan", icon: "📸" },
     { value: "entertainment", label: "Địa điểm giải trí", icon: "🎭" },
-    { value: "cafe", label: "Cafe & Quán nước", icon: "☕" },
-    { value: "tourist-attraction", label: "Địa điểm tham quan", icon: "📸" },
+
     { value: "shopping", label: "Mua sắm", icon: "🛍️" },
     { value: "spa", label: "Spa & Làm đẹp", icon: "💆" },
     { value: "nightlife", label: "Cuộc sống về đêm", icon: "🌃" },
+
+    { value: "vehicle-rental", label: "Thuê xe", icon: "🚗" },
   ];
+  const subcategoriesByCategory = {
+    "tourist-attraction": [
+      { value: "nature", label: "Thiên nhiên" },
+      { value: "history", label: "Lịch sử" },
+      { value: "culture", label: "Văn hóa" },
+      { value: "check-in", label: "Check-in" },
+    ],
+
+    restaurant: [
+      { value: "vietnamese", label: "Món Việt" },
+      { value: "street-food", label: "Street Food" },
+      { value: "fine-dining", label: "Cao cấp" },
+      { value: "budget", label: "Giá rẻ" },
+    ],
+
+    cafe: [
+      { value: "coffee", label: "Café" },
+      { value: "rooftop", label: "Rooftop" },
+      { value: "view", label: "View đẹp" },
+      { value: "bar", label: "Bar" },
+    ],
+
+    resort: [
+      { value: "beach", label: "Gần biển" },
+      { value: "luxury", label: "Luxury" },
+      { value: "family", label: "Gia đình" },
+      { value: "honeymoon", label: "Honeymoon" },
+    ],
+
+    homestay: [
+      { value: "mountain-view", label: "View núi" },
+      { value: "ethnic-culture", label: "Văn hóa dân tộc" },
+      { value: "local-experience", label: "Trải nghiệm thực tế" },
+    ],
+
+    hotel: [
+      { value: "budget", label: "Budget" },
+      { value: "mid-range", label: "Mid-range" },
+      { value: "luxury", label: "Luxury" },
+      { value: "beach", label: "Gần biển" },
+    ],
+
+    entertainment: [
+      { value: "theme-park", label: "Công viên giải trí" },
+      { value: "cinema", label: "Rạp chiếu phim" },
+      { value: "museum", label: "Bảo tàng" },
+      { value: "activity", label: "Hoạt động vui chơi" },
+    ],
+
+    shopping: [
+      { value: "mall", label: "Trung tâm thương mại" },
+      { value: "local-market", label: "Chợ địa phương" },
+      { value: "souvenir", label: "Quà lưu niệm" },
+    ],
+
+    spa: [
+      { value: "massage", label: "Massage" },
+      { value: "beauty", label: "Làm đẹp" },
+      { value: "relax", label: "Thư giãn" },
+    ],
+
+    nightlife: [
+      { value: "pub", label: "Pub" },
+      { value: "bar", label: "Bar" },
+      { value: "club", label: "Club" },
+    ],
+
+    "vehicle-rental": [
+      { value: "car", label: "Thuê xe hơi" },
+      { value: "motorbike", label: "Thuê xe máy" },
+      { value: "bike", label: "Thuê xe đạp" },
+    ],
+  };
+
+  const currentSubcategories = subcategoriesByCategory[formData.category] || [];
 
   const priceRanges = [
     { value: "budget", label: "$ - Giá rẻ", description: "Dưới 500k" },
@@ -170,6 +253,7 @@ const PostForm = () => {
       fd.append("phoneNumber", formData.phoneNumber || "");
       fd.append("website", formData.website || "");
       fd.append("amenities", JSON.stringify(formData.amenities || []));
+      fd.append("subcategory", formData.subcategory || "");
 
       // attach images
       formData.images.forEach((file) => {
@@ -227,6 +311,14 @@ const PostForm = () => {
             <div className={styles.previewCategory}>
               {categories.find((c) => c.value === formData.category)?.icon}
               {categories.find((c) => c.value === formData.category)?.label}
+              {formData.subcategory && (
+                <div className={styles.previewSubcategory}>
+                  —{" "}
+                  {currentSubcategories.find(
+                    (s) => s.value === formData.subcategory
+                  )?.label || formData.subcategory}
+                </div>
+              )}
             </div>
 
             <h1>{formData.title}</h1>
@@ -443,6 +535,28 @@ const PostForm = () => {
             ))}
           </div>
         </div>
+        {/* Subcategory Selection */}
+        {formData.category && currentSubcategories.length > 0 && (
+          <div className={styles.section}>
+            <label className={styles.sectionTitle}>Danh mục con</label>
+
+            <div className={styles.subcategoryGrid}>
+              {currentSubcategories.map((sub) => (
+                <div
+                  key={sub.value}
+                  className={`${styles.subcategoryCard} ${
+                    formData.subcategory === sub.value ? styles.selected : ""
+                  }`}
+                  onClick={() =>
+                    setFormData((prev) => ({ ...prev, subcategory: sub.value }))
+                  }
+                >
+                  <span className={styles.subcategoryLabel}>{sub.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Price Range */}
         <div className={styles.section}>

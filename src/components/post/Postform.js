@@ -278,8 +278,8 @@ const PostForm = () => {
       }
 
       alert("Đăng bài thành công");
-      // optionally reset form or redirect
-      window.location.href = "/Post";
+      // Chuyển về trang Điểm đến để thấy danh sách cập nhật
+      window.location.href = "/destinations";
     } catch (err) {
       console.error(err);
       alert("Đã xảy ra lỗi khi đăng bài");

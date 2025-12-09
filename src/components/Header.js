@@ -78,9 +78,6 @@ export default function Header() {
             <Link href="/community" className={styles.navLink}>
               Cộng đồng
             </Link>
-            <Link href="/Post" className={styles.navLink}>
-              Tìm kiếm
-            </Link>
           </nav>
 
           {/* Desktop User Menu */}
@@ -182,9 +179,6 @@ export default function Header() {
             </Link>
             <Link href="/community" className={styles.navLink}>
               Cộng đồng
-            </Link>
-            <Link href="/Post" className={styles.navLink}>
-              Tìm kiếm
             </Link>
 
             <div className={styles.mobileUserMenu}>

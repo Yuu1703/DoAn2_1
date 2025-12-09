@@ -3,6 +3,7 @@ import { MapPin, Star, ChevronLeft, ChevronRight, Heart } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import { useRouter } from "next/router";
 import styles from "@/styles/ProductsDisplaySection.module.css";
+import PostForm from "@/components/post/Postform";
 
 const ITEMS_PER_PAGE = 8;
 
@@ -29,6 +30,7 @@ export default function ProductsDisplaySection() {
   const [sortBy, setSortBy] = useState("featured");
   const [currentPage, setCurrentPage] = useState(1);
   const [favorites, setFavorites] = useState([]);
+  const [isPostOpen, setIsPostOpen] = useState(false);
 
   // Fetch destinations from API on mount
   useEffect(() => {
@@ -453,16 +455,25 @@ export default function ProductsDisplaySection() {
             <span className={styles.resultCount}>
               Tìm thấy {filteredAndSortedData.length} kết quả
             </span>
-            <select
-              className={styles.sortSelect}
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-            >
-              <option value="featured">Nổi bật</option>
-              <option value="rating-high">Đánh giá cao nhất</option>
-              <option value="rating-low">Đánh giá thấp nhất</option>
-              <option value="reviews-most">Nhiều đánh giá nhất</option>
-            </select>
+            <div className={styles.actions}>
+              <select
+                className={styles.sortSelect}
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+              >
+                <option value="featured">Nổi bật</option>
+                <option value="rating-high">Đánh giá cao nhất</option>
+                <option value="rating-low">Đánh giá thấp nhất</option>
+                <option value="reviews-most">Nhiều đánh giá nhất</option>
+              </select>
+              <button
+                type="button"
+                className={styles.postButton}
+                onClick={() => setIsPostOpen(true)}
+              >
+                Đăng bài
+              </button>
+            </div>
           </div>
 
           {/* Products Grid */}
@@ -525,6 +536,20 @@ export default function ProductsDisplaySection() {
                   Tiếp
                   <ChevronRight size={16} />
                 </button>
+              </div>
+            </div>
+          )}
+          {/* Modal Đăng bài */}
+          {isPostOpen && (
+            <div className={styles.modalOverlay} onClick={() => setIsPostOpen(false)}>
+              <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+                <div className={styles.modalHeader}>
+                  <h3>Đăng bài địa điểm</h3>
+                  <button className={styles.modalClose} onClick={() => setIsPostOpen(false)}>✕</button>
+                </div>
+                <div className={styles.modalBody}>
+                  <PostForm />
+                </div>
               </div>
             </div>
           )}

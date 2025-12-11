@@ -1,0 +1,375 @@
+/* ====== CONTAINER ====== */
+.container {
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: "Inter", sans-serif;
+  color: #222;
+}
+
+/* ====== GALLERY ====== */
+.gallery {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+/* Main image area */
+.mainImageWrap {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  cursor: zoom-in;
+  box-shadow: 0 6px 20px rgba(20, 30, 60, 0.08);
+}
+
+.mainImage {
+  display: block;
+  width: 100%;
+  height: 520px;
+  object-fit: cover;
+  transition: transform 180ms ease;
+}
+
+.mainImageWrap:hover .mainImage {
+  transform: scale(1.02);
+}
+
+/* Thumbnails */
+.thumbsWrap {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.thumbButton {
+  border: none;
+  background: transparent;
+  padding: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.thumbButton img {
+  width: 92px;
+  height: 68px;
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
+  border: 2px solid transparent;
+}
+
+.thumbActive img {
+  border-color: #3949ab;
+}
+
+/* Lightbox / modal */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 9999;
+}
+
+.lightboxImage {
+  max-width: 92%;
+  max-height: 88%;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+}
+
+.lightboxClose,
+.lightboxPrev,
+.lightboxNext {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.lightboxClose {
+  top: 20px;
+  right: 20px;
+}
+.lightboxPrev {
+  left: 20px;
+}
+.lightboxNext {
+  right: 20px;
+}
+
+/* ====== HEADER ====== */
+.header {
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.category {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #eef2ff;
+  padding: 6px 14px;
+  border-radius: 20px;
+  color: #3949ab;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.title {
+  font-size: 30px;
+  font-weight: 700;
+  margin: 12px 0 4px;
+}
+
+.author {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.ratings {
+  font-size: 17px;
+  font-weight: 600;
+  color: #ff9800;
+}
+
+/* Meta tags shown under title */
+.metaTags {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.metaTag {
+  background: #f3f4ff;
+  color: #222;
+  padding: 6px 10px;
+  border-radius: 18px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid #e6e9ff;
+}
+
+/* Combined badge style for Resort & Family */
+.metaTagCombined {
+  background: linear-gradient(90deg, #ffe9e0, #fff4e0);
+  color: #c74900;
+  border: 1px solid rgba(200, 80, 20, 0.12);
+  box-shadow: 0 4px 14px rgba(200, 80, 20, 0.06);
+}
+
+/* ====== INFO PANEL ====== */
+.infoSection {
+  background: #fafbff;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #e0e7ff;
+  margin-bottom: 35px;
+}
+
+.infoRow {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.infoRow strong {
+  color: #333;
+}
+
+/* ====== CONTENT SECTIONS ====== */
+.section {
+  margin-bottom: 40px;
+}
+
+.section h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.section p {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* ====== AMENITIES ====== */
+.amenities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.amenityTag {
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* ====== COMMENT FORM ====== */
+.commentForm {
+  background: #fafafa;
+  border: 1px solid #eee;
+  padding: 18px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+}
+
+.commentForm h3 {
+  margin-bottom: 10px;
+}
+
+.textarea {
+  width: 100%;
+  height: 120px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  margin-bottom: 15px;
+  resize: vertical;
+  font-size: 15px;
+}
+
+/* Rating stars */
+.ratingInput {
+  font-size: 22px;
+  margin-bottom: 12px;
+}
+
+/* ====== UPLOAD BOX ====== */
+.uploadBox {
+  margin-bottom: 12px;
+}
+
+.uploadLabel {
+  display: inline-block;
+  background: #eef2ff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #3949ab;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.uploadInput {
+  display: none;
+}
+
+.previewImages {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.previewImages img {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+/* ====== SUBMIT BUTTON ====== */
+.submitButton {
+  background: #3949ab;
+  color: white;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.submitButton:hover {
+  background: #2f3f9c;
+}
+
+/* ====== COMMENT LIST ====== */
+.commentList {
+  margin-top: 20px;
+}
+
+.commentItem {
+  padding: 15px 18px;
+  background: #fdfdfd;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  margin-bottom: 16px;
+}
+
+.commentHeader {
+  font-size: 15px;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.commentText {
+  font-size: 15px;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.commentImages {
+  display: flex;
+  gap: 8px;
+}
+
+.commentImages img {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* ====== EMPTY ====== */
+.emptyBox {
+  padding: 18px;
+  border: 1px dashed #ccc;
+  border-radius: 10px;
+  text-align: center;
+  color: #777;
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 768px) {
+  .title {
+    font-size: 25px;
+  }
+
+  .gallery img {
+    height: 170px;
+  }
+
+  .mainImage {
+    height: 280px;
+  }
+
+  .thumbButton img {
+    width: 72px;
+    height: 54px;
+  }
+}

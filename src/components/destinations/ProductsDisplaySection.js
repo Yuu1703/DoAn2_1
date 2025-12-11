@@ -47,14 +47,15 @@ export default function ProductsDisplaySection() {
           let amenities = [];
           try {
             if (p.amenities) {
-              amenities = typeof p.amenities === 'string' 
-                ? JSON.parse(p.amenities) 
-                : Array.isArray(p.amenities) 
-                  ? p.amenities 
+              amenities =
+                typeof p.amenities === "string"
+                  ? JSON.parse(p.amenities)
+                  : Array.isArray(p.amenities)
+                  ? p.amenities
                   : [];
             }
           } catch (err) {
-            console.error('Failed to parse amenities:', err);
+            console.error("Failed to parse amenities:", err);
             amenities = [];
           }
 
@@ -68,7 +69,9 @@ export default function ProductsDisplaySection() {
 
           return {
             id: String(p._id || p.id),
-            image: (p.images && p.images[0]) || "/destinations/halong-sunset-cafe.jpg",
+            image:
+              (p.images && p.images[0]) ||
+              "/destinations/halong-sunset-cafe.jpg",
             region: p.region || "",
             location: p.province || "",
             name: p.title || "",
@@ -132,10 +135,14 @@ export default function ProductsDisplaySection() {
     // ✅ KIỂM TRA ĐĂNG NHẬP
     if (!user || !user.id) {
       const currentUrl = router.asPath;
-      localStorage.setItem('redirectAfterLogin', currentUrl);
-      
-      if (window.confirm("Bạn cần đăng nhập để sử dụng tính năng yêu thích. Đăng nhập ngay?")) {
-        router.push('/login');
+      localStorage.setItem("redirectAfterLogin", currentUrl);
+
+      if (
+        window.confirm(
+          "Bạn cần đăng nhập để sử dụng tính năng yêu thích. Đăng nhập ngay?"
+        )
+      ) {
+        router.push("/login");
       }
       return;
     }
@@ -150,47 +157,46 @@ export default function ProductsDisplaySection() {
     const newFavorites = isCurrentlyFavorite
       ? favorites.filter((id) => id !== destinationId)
       : [...favorites, destinationId];
-    
+
     setFavorites(newFavorites);
 
     // ✅ LƯU VÀO DATABASE
     try {
-      const res = await fetch('/api/favorites', {
-        method: 'POST',
+      const res = await fetch("/api/favorites", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           userId: user.id,
           destinationId: destinationId,
-          action: isCurrentlyFavorite ? 'remove' : 'add',
+          action: isCurrentlyFavorite ? "remove" : "add",
         }),
       });
 
       if (!res.ok) {
-        throw new Error('Failed to update favorites');
+        throw new Error("Failed to update favorites");
       }
 
       const data = await res.json();
-      
+
       // ✅ SYNC LẠI VỚI DATABASE (đảm bảo data đúng)
       setFavorites(data.favorites || newFavorites);
 
       // ✅ HIỂN THỊ THÔNG BÁO
       if (isCurrentlyFavorite) {
         // Tùy chọn: Có thể thêm toast notification
-        console.log('Đã xóa khỏi yêu thích');
+        console.log("Đã xóa khỏi yêu thích");
       } else {
-        console.log('Đã thêm vào yêu thích');
+        console.log("Đã thêm vào yêu thích");
       }
-
     } catch (error) {
-      console.error('Error updating favorites:', error);
-      
+      console.error("Error updating favorites:", error);
+
       // ✅ NẾU LỖI → ROLLBACK LOCAL STATE
       setFavorites(favorites);
-      
-      alert('Có lỗi xảy ra. Vui lòng thử lại.');
+
+      alert("Có lỗi xảy ra. Vui lòng thử lại.");
     }
   };
 
@@ -210,8 +216,14 @@ export default function ProductsDisplaySection() {
     window.addEventListener("sidebarFiltersChange", handleSidebarFiltersChange);
 
     return () => {
-      window.removeEventListener("searchFiltersChange", handleSearchFiltersChange);
-      window.removeEventListener("sidebarFiltersChange", handleSidebarFiltersChange);
+      window.removeEventListener(
+        "searchFiltersChange",
+        handleSearchFiltersChange
+      );
+      window.removeEventListener(
+        "sidebarFiltersChange",
+        handleSidebarFiltersChange
+      );
     };
   }, []);
 
@@ -269,7 +281,7 @@ export default function ProductsDisplaySection() {
       // Sidebar filters - Amenities
       if (sidebarFilters.amenities && sidebarFilters.amenities.length > 0) {
         const destAmenities = dest.amenities || [];
-        const hasMatchingAmenity = sidebarFilters.amenities.some(amenity =>
+        const hasMatchingAmenity = sidebarFilters.amenities.some((amenity) =>
           destAmenities.includes(amenity)
         );
         if (!hasMatchingAmenity) return false;
@@ -279,18 +291,19 @@ export default function ProductsDisplaySection() {
     });
 
     // Smart sort
-    const hasAmenitiesFilter = sidebarFilters.amenities && sidebarFilters.amenities.length > 0;
+    const hasAmenitiesFilter =
+      sidebarFilters.amenities && sidebarFilters.amenities.length > 0;
 
     if (hasAmenitiesFilter && sortBy === "featured") {
       filtered.sort((a, b) => {
         const aAmenities = a.amenities || [];
         const bAmenities = b.amenities || [];
-        
-        const aMatchCount = sidebarFilters.amenities.filter(amenity =>
+
+        const aMatchCount = sidebarFilters.amenities.filter((amenity) =>
           aAmenities.includes(amenity)
         ).length;
-        
-        const bMatchCount = sidebarFilters.amenities.filter(amenity =>
+
+        const bMatchCount = sidebarFilters.amenities.filter((amenity) =>
           bAmenities.includes(amenity)
         ).length;
 
@@ -341,15 +354,8 @@ export default function ProductsDisplaySection() {
 
   // Destination Card Component
   const DestinationCard = ({ data }) => {
-    const {
-      image,
-      location,
-      name,
-      category,
-      description,
-      rating,
-      reviews,
-    } = data;
+    const { image, location, name, category, description, rating, reviews } =
+      data;
 
     const categoryNames = {
       hotel: "Khách sạn",
@@ -369,8 +375,16 @@ export default function ProductsDisplaySection() {
       e.target.src = "https://via.placeholder.com/400x300?text=VietJourney";
     };
 
+    const handleOpenDetail = () => {
+      router.push({ pathname: "/DeitalPost", query: { id: data.id } });
+    };
+
     return (
-      <div className={styles.card}>
+      <div
+        className={styles.card}
+        onClick={handleOpenDetail}
+        style={{ cursor: "pointer" }}
+      >
         <div className={styles.imageWrapper}>
           <img
             src={image}
@@ -424,7 +438,15 @@ export default function ProductsDisplaySection() {
               </span>
             </div>
 
-            <button className={styles.detailButton}>Xem chi tiết</button>
+            <button
+              className={styles.detailButton}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleOpenDetail();
+              }}
+            >
+              Xem chi tiết
+            </button>
           </div>
         </div>
       </div>
@@ -487,7 +509,8 @@ export default function ProductsDisplaySection() {
           {filteredAndSortedData.length === 0 && (
             <div className={styles.noResults}>
               <p>
-                Không tìm thấy kết quả phù hợp. Vui lòng thử lại với bộ lọc khác.
+                Không tìm thấy kết quả phù hợp. Vui lòng thử lại với bộ lọc
+                khác.
               </p>
             </div>
           )}
@@ -541,11 +564,22 @@ export default function ProductsDisplaySection() {
           )}
           {/* Modal Đăng bài */}
           {isPostOpen && (
-            <div className={styles.modalOverlay} onClick={() => setIsPostOpen(false)}>
-              <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <div
+              className={styles.modalOverlay}
+              onClick={() => setIsPostOpen(false)}
+            >
+              <div
+                className={styles.modal}
+                onClick={(e) => e.stopPropagation()}
+              >
                 <div className={styles.modalHeader}>
                   <h3>Đăng bài địa điểm</h3>
-                  <button className={styles.modalClose} onClick={() => setIsPostOpen(false)}>✕</button>
+                  <button
+                    className={styles.modalClose}
+                    onClick={() => setIsPostOpen(false)}
+                  >
+                    ✕
+                  </button>
                 </div>
                 <div className={styles.modalBody}>
                   <PostForm />

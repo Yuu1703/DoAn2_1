@@ -75,7 +75,7 @@ export default function Header() {
             <Link href="/contact" className={styles.navLink}>
               Liên hệ
             </Link>
-            <Link href="/community" className={styles.navLink}>
+            <Link href="/DeitalPost" className={styles.navLink}>
               Cộng đồng
             </Link>
           </nav>
@@ -177,7 +177,7 @@ export default function Header() {
             <Link href="/contact" className={styles.navLink}>
               Liên hệ
             </Link>
-            <Link href="/community" className={styles.navLink}>
+            <Link href="/Postform" className={styles.navLink}>
               Cộng đồng
             </Link>
 

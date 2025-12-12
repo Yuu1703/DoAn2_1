@@ -4,6 +4,7 @@ import { useUser } from "@/context/UserContext";
 import { useRouter } from "next/router";
 import styles from "@/styles/ProductsDisplaySection.module.css";
 import PostForm from "@/components/post/Postform";
+import LoginNotification from "@/components/common/LoginNotification"; // ✅ THÊM IMPORT
 
 const ITEMS_PER_PAGE = 8;
 
@@ -31,6 +32,7 @@ export default function ProductsDisplaySection() {
   const [currentPage, setCurrentPage] = useState(1);
   const [favorites, setFavorites] = useState([]);
   const [isPostOpen, setIsPostOpen] = useState(false);
+  const [showLoginNotification, setShowLoginNotification] = useState(false); // ✅ THÊM STATE
 
   // Fetch destinations from API on mount
   useEffect(() => {
@@ -101,7 +103,7 @@ export default function ProductsDisplaySection() {
     };
   }, []);
 
-  // ✅ LOAD FAVORITES TỪ DATABASE KHI USER ĐĂNG NHẬP
+  // Load favorites from database when user logs in
   useEffect(() => {
     if (user && user.id) {
       loadFavoritesFromDB();
@@ -110,7 +112,7 @@ export default function ProductsDisplaySection() {
     }
   }, [user]);
 
-  // ✅ HÀM LOAD FAVORITES TỪ DATABASE
+  // Load favorites from database
   const loadFavoritesFromDB = async () => {
     try {
       const res = await fetch(`/api/favorites?userId=${user.id}`);
@@ -127,32 +129,23 @@ export default function ProductsDisplaySection() {
   // Check if favorited
   const isFavorite = (id) => favorites.includes(id);
 
-  // ✅ TOGGLE FAVORITE - LƯU VÀO DATABASE
+  // ✅ TOGGLE FAVORITE - HIỂN THỊ NOTIFICATION NẾU CHƯA ĐĂNG NHẬP
   const handleToggleFavorite = async (e, destinationId) => {
     e.preventDefault();
     e.stopPropagation();
 
-    // ✅ KIỂM TRA ĐĂNG NHẬP
+    // ✅ KIỂM TRA ĐĂNG NHẬP - HIỂN THỊ NOTIFICATION
     if (!user || !user.id) {
-      const currentUrl = router.asPath;
-      localStorage.setItem("redirectAfterLogin", currentUrl);
-
-      if (
-        window.confirm(
-          "Bạn cần đăng nhập để sử dụng tính năng yêu thích. Đăng nhập ngay?"
-        )
-      ) {
-        router.push("/login");
-      }
+      setShowLoginNotification(true); // ✅ HIỂN THỊ NOTIFICATION
       return;
     }
 
-    // ✅ ANIMATION
+    // Animation
     const button = e.currentTarget;
     button.classList.add(styles.heartBounce);
     setTimeout(() => button.classList.remove(styles.heartBounce), 600);
 
-    // ✅ UPDATE LOCAL STATE NGAY (Optimistic Update)
+    // Update local state (Optimistic Update)
     const isCurrentlyFavorite = favorites.includes(destinationId);
     const newFavorites = isCurrentlyFavorite
       ? favorites.filter((id) => id !== destinationId)
@@ -160,7 +153,7 @@ export default function ProductsDisplaySection() {
 
     setFavorites(newFavorites);
 
-    // ✅ LƯU VÀO DATABASE
+    // Save to database
     try {
       const res = await fetch("/api/favorites", {
         method: "POST",
@@ -179,23 +172,16 @@ export default function ProductsDisplaySection() {
       }
 
       const data = await res.json();
-
-      // ✅ SYNC LẠI VỚI DATABASE (đảm bảo data đúng)
       setFavorites(data.favorites || newFavorites);
 
-      // ✅ HIỂN THỊ THÔNG BÁO
       if (isCurrentlyFavorite) {
-        // Tùy chọn: Có thể thêm toast notification
         console.log("Đã xóa khỏi yêu thích");
       } else {
         console.log("Đã thêm vào yêu thích");
       }
     } catch (error) {
       console.error("Error updating favorites:", error);
-
-      // ✅ NẾU LỖI → ROLLBACK LOCAL STATE
       setFavorites(favorites);
-
       alert("Có lỗi xảy ra. Vui lòng thử lại.");
     }
   };
@@ -562,6 +548,7 @@ export default function ProductsDisplaySection() {
               </div>
             </div>
           )}
+
           {/* Modal Đăng bài */}
           {isPostOpen && (
             <div
@@ -586,6 +573,13 @@ export default function ProductsDisplaySection() {
                 </div>
               </div>
             </div>
+          )}
+
+          {/* ✅ LOGIN NOTIFICATION - THÊM Ở CUỐI */}
+          {showLoginNotification && (
+            <LoginNotification 
+              onClose={() => setShowLoginNotification(false)} 
+            />
           )}
         </>
       )}

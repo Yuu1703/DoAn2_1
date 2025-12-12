@@ -33,6 +33,7 @@ export default async function handler(req, res) {
       bankAccount: user.bankAccount || null,
       bankName: user.bankName || null,
       gender: user.gender || null,
+      favorites: user.favorites || [], 
     };
 
     return res.status(200).json({ user: safeUser });

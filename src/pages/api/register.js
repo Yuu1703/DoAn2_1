@@ -36,6 +36,7 @@ export default async function handler(req, res) {
       email,
       phone: phone || "",
       passwordHash,
+      favorites: [], 
       createdAt: new Date(),
       updatedAt: new Date(),
     };

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import styles from "@/styles/DetailPost.module.css";
 import { useUser } from "@/context/UserContext";
+import LoginNotification from "@/components/common/LoginNotification";
 
 /* =========================================================
    CATEGORY → SUBCATEGORY → LABEL MAPPING
@@ -63,12 +64,14 @@ const CATEGORY_MAP = {
   ],
 };
 
+
 // Helper: convert value → label
 function getLabel(category, subcategory) {
   const catKey = category?.toLowerCase();
   const subKey = subcategory?.toLowerCase();
   const list = CATEGORY_MAP[catKey];
   if (!list) return { catLabel: category, subLabel: subcategory };
+
 
   const found = list.find((x) => x.value === subKey);
   return {
@@ -77,9 +80,11 @@ function getLabel(category, subcategory) {
   };
 }
 
+
 /* =========================================================
    MAIN COMPONENT
    ========================================================= */
+
 
 export default function DetailPost({ post, postId }) {
   if (!post) {
@@ -89,6 +94,7 @@ export default function DetailPost({ post, postId }) {
       </div>
     );
   }
+
 
   const {
     title = "",
@@ -108,10 +114,14 @@ export default function DetailPost({ post, postId }) {
     authorName = "",
   } = post || {};
 
+
   const { user } = useUser();
+
+  const [showLoginNotification, setShowLoginNotification] = useState(false);
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+
 
   const [selectedRating, setSelectedRating] = useState(0);
   const [comment, setComment] = useState("");
@@ -119,16 +129,19 @@ export default function DetailPost({ post, postId }) {
   const [uploadedImages, setUploadedImages] = useState([]);
   const [comments, setComments] = useState([]);
 
+
   const [ratingsObj, setRatingsObj] = useState(
     post?.ratings && typeof post.ratings === "object" ? post.ratings : {}
   );
   const [hasRated, setHasRated] = useState(false);
+
 
   useEffect(() => {
     if (user?.id) {
       setHasRated(Boolean(ratingsObj?.[String(user.id)]));
     }
   }, [user, ratingsObj]);
+
 
   const ratingValues = Object.values(ratingsObj || {}).map(Number);
   const ratingCount = ratingValues.length;
@@ -137,24 +150,30 @@ export default function DetailPost({ post, postId }) {
       ? (ratingValues.reduce((a, b) => a + b, 0) / ratingCount).toFixed(1)
       : null;
 
+
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
     setPreviewImages(files.map((f) => URL.createObjectURL(f)));
     setUploadedImages(files);
   };
 
+
   const openLightbox = (i = 0) => {
     setCurrentImageIndex(i);
     setLightboxOpen(true);
   };
 
+
   const closeLightbox = () => setLightboxOpen(false);
+
 
   const showPrev = () =>
     setCurrentImageIndex((i) => (i > 0 ? i - 1 : images.length - 1));
 
+
   const showNext = () =>
     setCurrentImageIndex((i) => (i < images.length - 1 ? i + 1 : 0));
+
 
   /* =========================================================
      LOAD COMMENTS
@@ -167,8 +186,10 @@ export default function DetailPost({ post, postId }) {
           postId || post?.id || post?._id || post?._id?.toString() || "";
         if (!id) return;
 
+
         const res = await fetch(`/api/comments?postId=${id}`);
         if (!res.ok) throw new Error("Load comments failed");
+
 
         const json = await res.json();
         if (active) setComments(json.data || []);
@@ -182,13 +203,18 @@ export default function DetailPost({ post, postId }) {
     };
   }, [post, postId]);
 
+
   /* =========================================================
      SUBMIT COMMENT
      ========================================================= */
-  const handleSubmitComment = async () => {
-    if (!user?.id) return alert("Bạn cần đăng nhập");
+const handleSubmitComment = async () => {
+  if (!user?.id) {
+    setShowLoginNotification(true);   // bật thông báo giống trang list
+    return;
+  }
 
-    if (!comment.trim()) return alert("Bạn chưa nhập nội dung");
+  if (!comment.trim()) return alert("Bạn chưa nhập nội dung");
+
 
     try {
       const form = new FormData();
@@ -197,13 +223,16 @@ export default function DetailPost({ post, postId }) {
       form.append("text", comment);
       uploadedImages.forEach((f) => form.append("images", f));
 
+
       const res = await fetch(`/api/comments/create`, {
         method: "POST",
         body: form,
       });
 
+
       const json = await res.json();
       if (!res.ok) throw new Error(json.message || "Lỗi gửi bình luận");
+
 
       setComments((p) => [json.data, ...p]);
       setComment("");
@@ -214,16 +243,22 @@ export default function DetailPost({ post, postId }) {
     }
   };
 
+
   /* =========================================================
      SUBMIT RATING
      ========================================================= */
-  const handleSubmitRating = async (value) => {
-    if (!user?.id) return alert("Bạn cần đăng nhập");
+const handleSubmitRating = async (value) => {
+  if (!user?.id) {
+    setShowLoginNotification(true);   // bật thông báo khi click sao mà chưa login
+    return;
+  }
 
-    if (hasRated) return alert("Bạn đã đánh giá trước đó");
+  if (hasRated) return alert("Bạn đã đánh giá trước đó");
+
 
     try {
       const pid = post?.id || post?._id;
+
 
       const res = await fetch(`/api/posts/add-rating`, {
         method: "POST",
@@ -231,8 +266,10 @@ export default function DetailPost({ post, postId }) {
         body: JSON.stringify({ postId: String(pid), rating: value }),
       });
 
+
       const json = await res.json();
       if (!res.ok) throw new Error(json.message);
+
 
       const next = { ...ratingsObj, [user.id]: value };
       setRatingsObj(next);
@@ -243,12 +280,20 @@ export default function DetailPost({ post, postId }) {
     }
   };
 
+
   /* =========================================================
      LABELS MAPPING
      ========================================================= */
   const { catLabel, subLabel } = getLabel(category, subcategory);
 
+
   return (
+    <>
+    {showLoginNotification && (
+      <LoginNotification
+        onClose={() => setShowLoginNotification(false)}
+      />
+    )}
     <div className={styles.container}>
       {/* ===================== GALLERY ===================== */}
       <div className={styles.gallery}>
@@ -265,6 +310,7 @@ export default function DetailPost({ post, postId }) {
               />
             </div>
 
+
             <div className={styles.thumbsWrap}>
               {images.map((img, i) => (
                 <button
@@ -278,6 +324,7 @@ export default function DetailPost({ post, postId }) {
                 </button>
               ))}
             </div>
+
 
             {lightboxOpen && (
               <div className={styles.lightbox} onClick={closeLightbox}>
@@ -313,6 +360,7 @@ export default function DetailPost({ post, postId }) {
         )}
       </div>
 
+
       {/* ===================== HEADER ===================== */}
       <div className={styles.header}>
         <div className={styles.category}>
@@ -320,7 +368,9 @@ export default function DetailPost({ post, postId }) {
           <span>{subLabel || "Danh mục"}</span>
         </div>
 
+
         <h1 className={styles.title}>{title}</h1>
+
 
         {/* Category Tags */}
         <div className={styles.metaTags}>
@@ -328,11 +378,13 @@ export default function DetailPost({ post, postId }) {
           <span className={styles.metaTag}>🧭 {subLabel || "—"}</span>
         </div>
 
+
         <div className={styles.ratings}>
           {ratingAvg
             ? `★ ${ratingAvg} / 5 (${ratingCount} đánh giá)`
             : "★ Chưa có đánh giá"}
         </div>
+
 
         {authorName && (
           <div style={{ fontSize: 14, marginTop: 4 }}>
@@ -340,6 +392,7 @@ export default function DetailPost({ post, postId }) {
           </div>
         )}
       </div>
+
 
       {/* ===================== INFO ===================== */}
       <div className={styles.infoSection}>
@@ -372,11 +425,13 @@ export default function DetailPost({ post, postId }) {
         )}
       </div>
 
+
       {/* ===================== DESCRIPTION ===================== */}
       <div className={styles.section}>
         <h2>Mô tả</h2>
         <p>{description}</p>
       </div>
+
 
       {/* ===================== AMENITIES ===================== */}
       {amenities.length > 0 && (
@@ -392,13 +447,16 @@ export default function DetailPost({ post, postId }) {
         </div>
       )}
 
+
       {/* ===================== COMMENTS ===================== */}
       <div className={styles.section}>
         <h2>Đánh giá & Bình luận</h2>
 
+
         {/* COMMENT FORM */}
         <div className={styles.commentForm}>
           <h3>Viết đánh giá của bạn</h3>
+
 
           <div className={styles.ratingInput}>
             <strong>
@@ -407,6 +465,7 @@ export default function DetailPost({ post, postId }) {
                 ? `${ratingAvg} / 5 (${ratingCount} đánh giá)`
                 : "Chưa có đánh giá"}
             </strong>
+
 
             {!hasRated ? (
               [1, 2, 3, 4, 5].map((star) => (
@@ -427,12 +486,14 @@ export default function DetailPost({ post, postId }) {
             )}
           </div>
 
+
           <textarea
             className={styles.textarea}
             placeholder="Hãy chia sẻ trải nghiệm của bạn..."
             value={comment}
             onChange={(e) => setComment(e.target.value)}
           />
+
 
           {/* UPLOAD IMAGES */}
           <div className={styles.uploadBox}>
@@ -447,6 +508,7 @@ export default function DetailPost({ post, postId }) {
               />
             </label>
 
+
             <div className={styles.previewImages}>
               {previewImages.map((src, i) => (
                 <img key={i} src={src} alt="preview" />
@@ -454,10 +516,12 @@ export default function DetailPost({ post, postId }) {
             </div>
           </div>
 
+
           <button className={styles.submitButton} onClick={handleSubmitComment}>
             Gửi đánh giá
           </button>
         </div>
+
 
         {/* COMMENTS LIST */}
         <div className={styles.commentList}>
@@ -473,7 +537,9 @@ export default function DetailPost({ post, postId }) {
                   </small>
                 </div>
 
+
                 <p className={styles.commentText}>{cmt.text}</p>
+
 
                 {cmt.images && (
                   <div className={styles.commentImages}>
@@ -490,6 +556,6 @@ export default function DetailPost({ post, postId }) {
         </div>
       </div>
     </div>
+    </>
   );
 }
-// End of DetailPost component

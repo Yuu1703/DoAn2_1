@@ -65,9 +65,8 @@ export default async function handler(req, res) {
       post.ratingAvg = null;
     }
 
-    // remove sensitive fields before sending to client
+    // remove sensitive fields before sending to client (keep authorId for ownership checks)
     try {
-      if (post && post.authorId) delete post.authorId;
       if (post && post.userId) delete post.userId;
       if (post && post.author) delete post.author;
     } catch (e) {

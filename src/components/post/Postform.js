@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useUser } from "@/context/UserContext";
 import styles from "@/styles/PostForm.module.css";
 
-const PostForm = () => {
+const PostForm = ({ initialData, onSubmitJson, onSubmitFormData }) => {
   const [formData, setFormData] = useState({
     title: "",
     region: "",
@@ -18,6 +18,22 @@ const PostForm = () => {
     website: "",
     subcategory: "",
   });
+
+  // Prefill when initialData provided (edit mode)
+  React.useEffect(() => {
+    if (initialData) {
+      setFormData((prev) => ({
+        ...prev,
+        ...initialData,
+        images: [], // do not preload files; keep empty
+      }));
+      // show existing images as previews in edit mode
+      try {
+        const imgs = Array.isArray(initialData.images) ? initialData.images : [];
+        setImagesPreviews(imgs);
+      } catch (_) {}
+    }
+  }, [initialData]);
 
   const [imagesPreviews, setImagesPreviews] = useState([]);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
@@ -235,12 +251,54 @@ const PostForm = () => {
       return;
     }
 
-    if (imagesPreviews.length === 0) {
+    // In edit mode (onSubmitJson/onSubmitFormData provided), skip image requirement
+    if (!onSubmitJson && !onSubmitFormData && imagesPreviews.length === 0) {
       alert("Vui lòng upload ít nhất 1 ảnh");
       return;
     }
 
     try {
+      // If edit mode, prefer multipart FormData for image updates
+      if (typeof onSubmitFormData === 'function') {
+        const fd = new FormData();
+        fd.append("title", formData.title);
+        fd.append("region", formData.region);
+        fd.append("province", formData.province);
+        fd.append("address", formData.address);
+        fd.append("category", formData.category);
+        fd.append("priceRange", formData.priceRange || "");
+        fd.append("description", formData.description || "");
+        fd.append("openingHours", formData.openingHours || "");
+        fd.append("phoneNumber", formData.phoneNumber || "");
+        fd.append("website", formData.website || "");
+        fd.append("amenities", JSON.stringify(formData.amenities || []));
+        fd.append("subcategory", formData.subcategory || "");
+
+        formData.images.forEach((file) => fd.append("images", file));
+
+        await onSubmitFormData(fd);
+        return;
+      }
+
+      // If edit mode without images change, allow JSON PUT
+      if (typeof onSubmitJson === 'function') {
+        await onSubmitJson({
+          title: formData.title,
+          region: formData.region,
+          province: formData.province,
+          address: formData.address,
+          category: formData.category,
+          priceRange: formData.priceRange || "",
+          description: formData.description || "",
+          openingHours: formData.openingHours || "",
+          phoneNumber: formData.phoneNumber || "",
+          website: formData.website || "",
+          amenities: formData.amenities || [],
+          subcategory: formData.subcategory || "",
+        });
+        return;
+      }
+
       const fd = new FormData();
       fd.append("title", formData.title);
       fd.append("region", formData.region);
@@ -381,7 +439,7 @@ const PostForm = () => {
 
         <div className={styles.previewActions}>
           <button onClick={handleSubmit} className={styles.publishButton}>
-            Đăng bài
+            {onSubmitJson || onSubmitFormData ? "Cập nhật" : "Đăng bài"}
           </button>
         </div>
       </div>
@@ -391,7 +449,7 @@ const PostForm = () => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1>Đăng bài địa điểm du lịch</h1>
+        <h1>{onSubmitJson || onSubmitFormData ? "Chỉnh sửa bài đăng" : "Đăng bài địa điểm du lịch"}</h1>
       </div>
 
       <form onSubmit={handleSubmit} className={styles.form}>
@@ -664,7 +722,7 @@ const PostForm = () => {
             👁️ Xem trước
           </button>
           <button type="submit" className={styles.submitButton}>
-            📤 Đăng bài
+            {onSubmitJson || onSubmitFormData ? "💾 Cập nhật" : "📤 Đăng bài"}
           </button>
         </div>
       </form>

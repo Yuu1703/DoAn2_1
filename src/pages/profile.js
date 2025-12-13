@@ -13,6 +13,12 @@ export default function ProfilePage() {
   const [pwdError, setPwdError] = useState(null);
   const [pwdMessage, setPwdMessage] = useState(null);
 
+  // Posts & favorites state
+  const [postsLoading, setPostsLoading] = useState(false);
+  const [myPosts, setMyPosts] = useState([]);
+  const [savedPosts, setSavedPosts] = useState([]);
+  const [savingAction, setSavingAction] = useState(null);
+
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -29,6 +35,63 @@ export default function ProfilePage() {
     })();
     return () => { cancelled = true; };
   }, []);
+
+  // Load my posts & saved posts when user is available
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      if (!user?.id) return;
+      setPostsLoading(true);
+      try {
+        const res = await fetch('/api/posts/get-all');
+        const json = await res.json();
+        const all = Array.isArray(json.data) ? json.data : [];
+
+        // My posts: authorId matches user.id
+        const mine = all.filter((p) => {
+          const aid = p.authorId || p.author;
+          return aid && String(aid) === String(user.id);
+        });
+        if (!cancelled) setMyPosts(mine);
+
+        // Saved posts via favorites API
+        let favIds = [];
+        try {
+          const favRes = await fetch(`/api/favorites?userId=${encodeURIComponent(String(user.id))}`);
+          const favJson = await favRes.json();
+          favIds = Array.isArray(favJson.favorites) ? favJson.favorites.map(String) : [];
+        } catch (_) {}
+
+        const saved = all.filter((p) => favIds.includes(String(p._id)));
+        if (!cancelled) setSavedPosts(saved);
+      } catch (e) {
+        // ignore
+      } finally {
+        if (!cancelled) setPostsLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [user]);
+
+  // Remove from favorites
+  const onUnsave = async (postId) => {
+    if (!user?.id || !postId) return;
+    setSavingAction(String(postId));
+    try {
+      const res = await fetch('/api/favorites', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: String(user.id), destinationId: String(postId), action: 'remove' }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message || 'Bỏ lưu thất bại');
+      setSavedPosts((prev) => prev.filter((p) => String(p._id) !== String(postId)));
+    } catch (e) {
+      alert(e.message);
+    } finally {
+      setSavingAction(null);
+    }
+  };
 
   const onPwdChange = (e) => {
     setPwd((p) => ({ ...p, [e.target.name]: e.target.value }));
@@ -151,6 +214,66 @@ export default function ProfilePage() {
                 Sửa thông tin
               </Link>
             </div>
+          </section>
+          <div style={{ height: 24 }} />
+          {/* My Posts Section */}
+          <section style={{
+            background: '#fff',
+            border: '1px solid #e2e8f0',
+            borderRadius: 12,
+            padding: 20,
+            boxShadow: '0 10px 30px rgba(0,0,0,0.05)'
+          }}>
+            <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 12 }}>Bài đăng của tôi</h2>
+            {postsLoading ? (
+              <div>Đang tải...</div>
+            ) : myPosts.length ? (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                {myPosts.map((p) => (
+                  <div key={String(p._id)} style={{ border: '1px solid #e2e8f0', borderRadius: 10, padding: 12 }}>
+                    <div style={{ fontWeight: 600 }}>{p.title || '—'}</div>
+                    <div style={{ color: '#4A5568', fontSize: 13 }}>{p.address || ''}</div>
+                    {/* Removed action buttons as requested */}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div>Chưa có bài đăng nào.</div>
+            )}
+          </section>
+          <div style={{ height: 24 }} />
+          {/* Saved Posts Section */}
+          <section style={{
+            background: '#fff',
+            border: '1px solid #e2e8f0',
+            borderRadius: 12,
+            padding: 20,
+            boxShadow: '0 10px 30px rgba(0,0,0,0.05)'
+          }}>
+            <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 12 }}>Đã lưu</h2>
+            {postsLoading ? (
+              <div>Đang tải...</div>
+            ) : savedPosts.length ? (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                {savedPosts.map((p) => (
+                  <div key={String(p._id)} style={{ border: '1px solid #e2e8f0', borderRadius: 10, padding: 12 }}>
+                    <div style={{ fontWeight: 600 }}>{p.title || '—'}</div>
+                    <div style={{ color: '#4A5568', fontSize: 13 }}>{p.address || ''}</div>
+                    <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
+                    <button
+                        onClick={() => onUnsave(p._id)}
+                        disabled={String(savingAction) === String(p._id)}
+                        style={{ background: 'transparent', border: 'none', color: '#E53E3E', cursor: 'pointer' }}
+                      >
+                        {String(savingAction) === String(p._id) ? 'Đang bỏ lưu…' : 'Bỏ lưu'}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div>Chưa có mục đã lưu.</div>
+            )}
           </section>
           <div style={{ height: 24 }} />
           <section style={{

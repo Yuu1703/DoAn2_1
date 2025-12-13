@@ -116,6 +116,9 @@ export default function DetailPost({ post, postId }) {
 
 
   const { user } = useUser();
+  const authorId = post?.authorId || post?.author || null;
+  const canEdit = Boolean(user?.id && authorId && String(user.id) === String(authorId));
+  const editTargetId = postId || post?.id || post?._id || post?._id?.toString() || "";
 
   const [showLoginNotification, setShowLoginNotification] = useState(false);
 
@@ -389,6 +392,25 @@ const handleSubmitRating = async (value) => {
         {authorName && (
           <div style={{ fontSize: 14, marginTop: 4 }}>
             Tác giả: {authorName}
+          </div>
+        )}
+
+        {canEdit && editTargetId && (
+          <div style={{ marginTop: 8 }}>
+            <a
+              href={`/post/edit/${encodeURIComponent(String(editTargetId))}`}
+              style={{
+                display: "inline-block",
+                padding: "8px 12px",
+                borderRadius: 6,
+                background: "#0ea5e9",
+                color: "white",
+                textDecoration: "none",
+                fontSize: 14,
+              }}
+            >
+              ✏️ Chỉnh sửa bài đăng
+            </a>
           </div>
         )}
       </div>

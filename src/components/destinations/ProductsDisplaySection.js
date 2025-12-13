@@ -407,7 +407,6 @@ export default function ProductsDisplaySection() {
           </div>
 
           <h3 className={styles.name}>{name}</h3>
-
           <div className={styles.category}>
             <span className={styles.categoryTag}>
               {categoryNames[category] || category}

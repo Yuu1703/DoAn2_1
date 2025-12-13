@@ -10,7 +10,6 @@ export const config = {
   },
 };
 
-// Ensure upload directory exists
 const uploadDir = path.join(process.cwd(), "public", "images", "comments");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
@@ -27,7 +26,8 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage }).array("images", 6);
+// ✅ Thay đổi từ 6 → 3 ảnh
+const upload = multer({ storage }).array("images", 3);
 
 function runMiddleware(req, res, fn) {
   return new Promise((resolve, reject) => {
@@ -82,17 +82,25 @@ export default async function handler(req, res) {
       return res.status(404).json({ ok: false, message: "Comment not found" });
     }
 
-    // Check if user is the owner
+    // Check ownership
     if (String(comment.userId) !== String(sessionUserId)) {
       return res.status(403).json({ ok: false, message: "Unauthorized" });
     }
 
-    // Handle images: keep existing + add new ones
+    // Handle images
     const newImagePaths = files.map((f) => `/images/comments/${f.filename}`);
     const keepImages = existingImages ? JSON.parse(existingImages) : [];
     const allImages = [...keepImages, ...newImagePaths];
 
-    // Update the comment
+    // ✅ Kiểm tra tổng số ảnh không quá 3
+    if (allImages.length > 3) {
+      return res.status(400).json({
+        ok: false,
+        message: "Tổng số ảnh không được vượt quá 3",
+      });
+    }
+
+    // Update comment
     const updateDoc = {
       text: text || "",
       images: allImages,

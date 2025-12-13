@@ -27,7 +27,8 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage }).array("images", 6);
+// ✅ Thay đổi từ 6 → 3 ảnh
+const upload = multer({ storage }).array("images", 3);
 
 function runMiddleware(req, res, fn) {
   return new Promise((resolve, reject) => {
@@ -55,7 +56,15 @@ export default async function handler(req, res) {
       return res.status(400).json({ ok: false, message: "Missing postId" });
     }
 
-    // derive userId from session cookie (same logic as /api/me)
+    // ✅ Kiểm tra số lượng ảnh
+    if (files.length > 3) {
+      return res.status(400).json({
+        ok: false,
+        message: "Chỉ được tải tối đa 3 ảnh",
+      });
+    }
+
+    // Derive userId from session cookie
     const cookie = require("cookie");
     const cookies = cookie.parse(req.headers.cookie || "");
     const token = cookies.token;
@@ -71,8 +80,6 @@ export default async function handler(req, res) {
 
     const imagePaths = files.map((f) => `/images/comments/${f.filename}`);
 
-    // NOTE: We intentionally DO NOT store postId in the comment document
-    // to match existing data model where comments are linked from posts via posts.commentsIds.
     const commentDoc = {
       userId: String(sessionUserId),
       text: text || "",
@@ -94,7 +101,7 @@ export default async function handler(req, res) {
       console.error("Failed to push commentId to post:", e);
     }
 
-    // Return created comment WITHOUT exposing internal userId
+    // Return created comment
     const usersCol = db.collection("User");
     let authorName = "Người dùng";
     try {

@@ -83,6 +83,9 @@ function getLabel(category, subcategory) {
    ========================================================= */
 
 export default function DetailPost({ post, postId }) {
+  // ✅ Thêm constant giới hạn ảnh
+  const MAX_IMAGES = 3;
+
   if (!post) {
     return (
       <div className={styles.container}>
@@ -150,10 +153,24 @@ export default function DetailPost({ post, postId }) {
       ? (ratingValues.reduce((a, b) => a + b, 0) / ratingCount).toFixed(1)
       : null;
 
+  // ✅ Upload ảnh khi tạo comment mới (giới hạn 3 ảnh)
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
+
+    if (files.length > MAX_IMAGES) {
+      alert(`Chỉ được tải tối đa ${MAX_IMAGES} ảnh`);
+      e.target.value = "";
+      return;
+    }
+
     setPreviewImages(files.map((f) => URL.createObjectURL(f)));
     setUploadedImages(files);
+  };
+
+  // ✅ Xóa ảnh khi tạo comment mới
+  const handleRemovePreviewImage = (index) => {
+    setPreviewImages((prev) => prev.filter((_, i) => i !== index));
+    setUploadedImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   const openLightbox = (i = 0) => {
@@ -221,11 +238,10 @@ export default function DetailPost({ post, postId }) {
       const json = await res.json();
       if (!res.ok) throw new Error(json.message || "Lỗi gửi bình luận");
 
-      // Thêm userId vào comment mới để hiển thị nút sửa/xóa ngay lập tức
       const newComment = {
         ...json.data,
-        userId: String(user.id), // Thêm userId
-        _id: json.data.id, // Đảm bảo có _id
+        userId: String(user.id),
+        _id: json.data.id,
       };
 
       setComments((p) => [newComment, ...p]);
@@ -236,12 +252,13 @@ export default function DetailPost({ post, postId }) {
       alert(err.message);
     }
   };
+
   /* =========================================================
      SUBMIT RATING
      ========================================================= */
   const handleSubmitRating = async (value) => {
     if (!user?.id) {
-      setShowLoginNotification(true); // bật thông báo khi click sao mà chưa login
+      setShowLoginNotification(true);
       return;
     }
 
@@ -268,12 +285,8 @@ export default function DetailPost({ post, postId }) {
     }
   };
 
-  /* =========================================================
-     LABELS MAPPING
-     ========================================================= */
   const { catLabel, subLabel } = getLabel(category, subcategory);
 
-  // Handler xóa comment
   const handleDeleteComment = async (commentId) => {
     if (!confirm("Bạn có chắc muốn xóa bình luận này?")) return;
 
@@ -288,17 +301,14 @@ export default function DetailPost({ post, postId }) {
       const json = await res.json();
       if (!res.ok) throw new Error(json.message || "Lỗi xóa bình luận");
 
-      // Xóa comment khỏi danh sách ngay lập tức
       setComments((prev) =>
         prev.filter((c) => String(c._id) !== String(commentId))
       );
-      // Xóa alert để UX mượt hơn
     } catch (err) {
       alert(err.message);
     }
   };
 
-  // Handler bắt đầu edit
   const handleStartEdit = (cmt) => {
     setEditingCommentId(String(cmt._id));
     setEditText(cmt.text || "");
@@ -306,7 +316,6 @@ export default function DetailPost({ post, postId }) {
     setEditUploadedImages([]);
   };
 
-  // Handler hủy edit
   const handleCancelEdit = () => {
     setEditingCommentId(null);
     setEditText("");
@@ -314,20 +323,42 @@ export default function DetailPost({ post, postId }) {
     setEditUploadedImages([]);
   };
 
-  // Handler upload ảnh khi edit
+  // ✅ Upload ảnh khi edit (kiểm tra tổng số ảnh)
   const handleEditImageUpload = (e) => {
     const files = Array.from(e.target.files);
+    const currentImageCount = editPreviewImages.length;
+    const totalImages = currentImageCount + files.length;
+
+    if (totalImages > MAX_IMAGES) {
+      alert(
+        `Tổng số ảnh không được vượt quá ${MAX_IMAGES}. Bạn đang có ${currentImageCount} ảnh, chỉ có thể thêm ${
+          MAX_IMAGES - currentImageCount
+        } ảnh nữa.`
+      );
+      e.target.value = "";
+      return;
+    }
+
     const newPreviews = files.map((f) => URL.createObjectURL(f));
     setEditPreviewImages((prev) => [...prev, ...newPreviews]);
     setEditUploadedImages((prev) => [...prev, ...files]);
   };
 
-  // Handler xóa ảnh trong edit mode
+  // ✅ Xóa ảnh trong edit mode
   const handleRemoveEditImage = (index) => {
+    const imageToRemove = editPreviewImages[index];
+
     setEditPreviewImages((prev) => prev.filter((_, i) => i !== index));
+
+    // Nếu là ảnh mới upload (blob:), xóa khỏi uploadedImages
+    if (imageToRemove.startsWith("blob:")) {
+      const blobIndex = editPreviewImages
+        .slice(0, index)
+        .filter((img) => img.startsWith("blob:")).length;
+      setEditUploadedImages((prev) => prev.filter((_, i) => i !== blobIndex));
+    }
   };
 
-  // Handler submit update
   const handleUpdateComment = async (commentId) => {
     if (!editText.trim()) return alert("Bạn chưa nhập nội dung");
 
@@ -336,13 +367,11 @@ export default function DetailPost({ post, postId }) {
       form.append("commentId", commentId);
       form.append("text", editText);
 
-      // Send existing images that weren't removed
       const existingImages = editPreviewImages.filter(
         (img) => !img.startsWith("blob:")
       );
       form.append("existingImages", JSON.stringify(existingImages));
 
-      // Append new uploaded images
       editUploadedImages.forEach((f) => form.append("images", f));
 
       const res = await fetch(`/api/comments/update`, {
@@ -353,7 +382,6 @@ export default function DetailPost({ post, postId }) {
       const json = await res.json();
       if (!res.ok) throw new Error(json.message || "Lỗi cập nhật bình luận");
 
-      // Cập nhật comment trong danh sách ngay lập tức
       setComments((prev) =>
         prev.map((c) =>
           String(c._id) === String(commentId)
@@ -369,7 +397,6 @@ export default function DetailPost({ post, postId }) {
       );
 
       handleCancelEdit();
-      // Xóa alert để UX mượt hơn
     } catch (err) {
       alert(err.message);
     }
@@ -453,7 +480,6 @@ export default function DetailPost({ post, postId }) {
 
           <h1 className={styles.title}>{title}</h1>
 
-          {/* Category Tags */}
           <div className={styles.metaTags}>
             <span className={styles.metaTag}>🏷️ {catLabel || "—"}</span>
             <span className={styles.metaTag}>🧭 {subLabel || "—"}</span>
@@ -584,24 +610,81 @@ export default function DetailPost({ post, postId }) {
               onChange={(e) => setComment(e.target.value)}
             />
 
-            {/* UPLOAD IMAGES */}
+            {/* ✅ UPLOAD IMAGES với giới hạn 3 ảnh và nút xóa */}
             <div className={styles.uploadBox}>
-              <label className={styles.uploadLabel}>
-                Tải ảnh lên
+              <label
+                className={styles.uploadLabel}
+                style={{
+                  opacity: previewImages.length >= MAX_IMAGES ? 0.5 : 1,
+                  cursor:
+                    previewImages.length >= MAX_IMAGES
+                      ? "not-allowed"
+                      : "pointer",
+                }}
+              >
+                Tải ảnh lên (tối đa {MAX_IMAGES} ảnh)
                 <input
                   type="file"
                   accept="image/*"
                   multiple
                   onChange={handleImageUpload}
                   className={styles.uploadInput}
+                  disabled={previewImages.length >= MAX_IMAGES}
                 />
               </label>
 
               <div className={styles.previewImages}>
                 {previewImages.map((src, i) => (
-                  <img key={i} src={src} alt="preview" />
+                  <div
+                    key={i}
+                    style={{ position: "relative", display: "inline-block" }}
+                  >
+                    <img src={src} alt="preview" />
+                    <button
+                      onClick={() => handleRemovePreviewImage(i)}
+                      style={{
+                        position: "absolute",
+                        top: "-8px",
+                        right: "-8px",
+                        width: "24px",
+                        height: "24px",
+                        borderRadius: "50%",
+                        background: "#ef4444",
+                        color: "white",
+                        border: "2px solid white",
+                        cursor: "pointer",
+                        fontSize: "16px",
+                        fontWeight: "bold",
+                        lineHeight: "1",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+                      }}
+                    >
+                      ×
+                    </button>
+                  </div>
                 ))}
               </div>
+
+              {previewImages.length > 0 && (
+                <small
+                  style={{
+                    display: "block",
+                    color: "#666",
+                    fontSize: "12px",
+                    marginTop: "8px",
+                  }}
+                >
+                  {previewImages.length}/{MAX_IMAGES} ảnh
+                  {previewImages.length >= MAX_IMAGES && (
+                    <span style={{ color: "#f87171", marginLeft: "8px" }}>
+                      (Đã đạt giới hạn)
+                    </span>
+                  )}
+                </small>
+              )}
             </div>
 
             <button
@@ -656,16 +739,41 @@ export default function DetailPost({ post, postId }) {
                         </div>
 
                         <div className={styles.uploadBox}>
-                          <label className={styles.uploadLabel}>
-                            Thêm ảnh
+                          <label
+                            className={styles.uploadLabel}
+                            style={{
+                              opacity:
+                                editPreviewImages.length >= MAX_IMAGES
+                                  ? 0.5
+                                  : 1,
+                              cursor:
+                                editPreviewImages.length >= MAX_IMAGES
+                                  ? "not-allowed"
+                                  : "pointer",
+                            }}
+                          >
+                            Thêm ảnh ({editPreviewImages.length}/{MAX_IMAGES})
                             <input
                               type="file"
                               accept="image/*"
                               multiple
                               onChange={handleEditImageUpload}
                               className={styles.uploadInput}
+                              disabled={editPreviewImages.length >= MAX_IMAGES}
                             />
                           </label>
+                          {editPreviewImages.length >= MAX_IMAGES && (
+                            <small
+                              style={{
+                                display: "block",
+                                color: "#f87171",
+                                fontSize: "12px",
+                                marginTop: "4px",
+                              }}
+                            >
+                              Đã đạt giới hạn {MAX_IMAGES} ảnh
+                            </small>
+                          )}
                         </div>
 
                         <div className={styles.editActions}>

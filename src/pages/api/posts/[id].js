@@ -71,18 +71,25 @@ export default async function handler(req, res) {
 
     if (req.method === "GET") {
       const post = await db.collection("posts").findOne({ _id });
-      if (!post) return res.status(404).json({ ok: false, message: "Post not found" });
+      if (!post)
+        return res.status(404).json({ ok: false, message: "Post not found" });
 
       // populate author name when possible
       try {
         const users = db.collection("User");
         const authorId = post.authorId || post.author || null;
         if (authorId) {
-          const authorKey = ObjectId.isValid(authorId) ? new ObjectId(authorId) : authorId;
+          const authorKey = ObjectId.isValid(authorId)
+            ? new ObjectId(authorId)
+            : authorId;
           const user = await users.findOne({ _id: authorKey });
           if (user) {
             post.authorName =
-              user.fullname || user.name || user.fullName || user.username || null;
+              user.fullname ||
+              user.name ||
+              user.fullName ||
+              user.username ||
+              null;
           }
         }
       } catch (e) {
@@ -91,12 +98,22 @@ export default async function handler(req, res) {
 
       // compute rating summary
       try {
-        const ratingsObj = post && post.ratings && typeof post.ratings === "object" ? post.ratings : {};
+        const ratingsObj =
+          post && post.ratings && typeof post.ratings === "object"
+            ? post.ratings
+            : {};
         const ratingValues = Object.values(ratingsObj || {})
           .map(Number)
           .filter((v) => !Number.isNaN(v));
         const ratingCount = ratingValues.length;
-        const ratingAvg = ratingCount > 0 ? Number((ratingValues.reduce((a, b) => a + b, 0) / ratingCount).toFixed(1)) : null;
+        const ratingAvg =
+          ratingCount > 0
+            ? Number(
+                (ratingValues.reduce((a, b) => a + b, 0) / ratingCount).toFixed(
+                  1
+                )
+              )
+            : null;
         post.ratingCount = ratingCount;
         post.ratingAvg = ratingAvg;
       } catch (e) {
@@ -117,7 +134,9 @@ export default async function handler(req, res) {
     if (req.method === "PUT") {
       const col = db.collection("posts");
 
-      const isMultipart = (req.headers["content-type"] || "").includes("multipart/form-data");
+      const isMultipart = (req.headers["content-type"] || "").includes(
+        "multipart/form-data"
+      );
       let update = {};
       let files = [];
 
@@ -168,8 +187,12 @@ export default async function handler(req, res) {
       // Attempt updates across possible key types
       const attempts = [
         { filter: { _id }, note: "_id:ObjectId" },
-        ...(typeof id === "string" ? [{ filter: { _id: id }, note: "_id:string" }] : []),
-        ...(typeof id === "string" ? [{ filter: { id }, note: "id:string" }] : []),
+        ...(typeof id === "string"
+          ? [{ filter: { _id: id }, note: "_id:string" }]
+          : []),
+        ...(typeof id === "string"
+          ? [{ filter: { id }, note: "id:string" }]
+          : []),
       ];
 
       let matched = 0;
@@ -186,7 +209,8 @@ export default async function handler(req, res) {
       // Fetch updated doc
       let updated = await col.findOne({ _id });
       if (!updated && typeof id === "string") {
-        updated = (await col.findOne({ _id: id })) || (await col.findOne({ id }));
+        updated =
+          (await col.findOne({ _id: id })) || (await col.findOne({ id }));
       }
       if (!updated) {
         return res.status(404).json({ ok: false, message: "Post not found" });

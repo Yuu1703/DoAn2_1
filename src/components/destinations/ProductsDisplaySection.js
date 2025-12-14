@@ -1,10 +1,17 @@
 import { useState, useEffect, useMemo } from "react";
-import { MapPin, Star, ChevronLeft, ChevronRight, Heart } from "lucide-react";
+import {
+  MapPin,
+  Star,
+  ChevronLeft,
+  ChevronRight,
+  Heart,
+  MessageCircle,
+} from "lucide-react"; // ✅ THÊM MessageCircle
 import { useUser } from "@/context/UserContext";
 import { useRouter } from "next/router";
 import styles from "@/styles/ProductsDisplaySection.module.css";
 import PostForm from "@/components/post/Postform";
-import LoginNotification from "@/components/common/LoginNotification"; // ✅ THÊM IMPORT
+import LoginNotification from "@/components/common/LoginNotification";
 
 const ITEMS_PER_PAGE = 8;
 
@@ -32,7 +39,32 @@ export default function ProductsDisplaySection() {
   const [currentPage, setCurrentPage] = useState(1);
   const [favorites, setFavorites] = useState([]);
   const [isPostOpen, setIsPostOpen] = useState(false);
-  const [showLoginNotification, setShowLoginNotification] = useState(false); // ✅ THÊM STATE
+  const [showLoginNotification, setShowLoginNotification] = useState(false);
+
+  // ✅ HELPER: Tính rating trung bình từ ratings object
+  const calculateRating = (ratingsObj) => {
+    if (!ratingsObj || typeof ratingsObj !== "object") return 0;
+
+    const values = Object.values(ratingsObj)
+      .map(Number)
+      .filter((v) => !isNaN(v));
+    if (values.length === 0) return 0;
+
+    const avg = values.reduce((sum, val) => sum + val, 0) / values.length;
+    return Math.round(avg * 10) / 10; // Làm tròn 1 chữ số thập phân
+  };
+
+  // ✅ HELPER: Đếm số lượng ratings
+  const countRatings = (ratingsObj) => {
+    if (!ratingsObj || typeof ratingsObj !== "object") return 0;
+    return Object.keys(ratingsObj).length;
+  };
+
+  // ✅ HELPER: Đếm số lượng comments
+  const countComments = (commentsIds) => {
+    if (!commentsIds || !Array.isArray(commentsIds)) return 0;
+    return commentsIds.length;
+  };
 
   // Fetch destinations from API on mount
   useEffect(() => {
@@ -69,6 +101,11 @@ export default function ProductsDisplaySection() {
               : [p.subcategory];
           }
 
+          // ✅ Tính rating và comments từ dữ liệu thực
+          const rating = calculateRating(p.ratings);
+          const reviews = countRatings(p.ratings);
+          const commentsCount = countComments(p.commentsIds);
+
           return {
             id: String(p._id || p.id),
             image:
@@ -81,8 +118,9 @@ export default function ProductsDisplaySection() {
             subcategory: subcategory,
             amenities: amenities,
             description: p.description || "",
-            reviews: p.reviews || 0,
-            rating: p.rating || 0,
+            reviews: reviews, // ✅ Số lượng ratings
+            rating: rating, // ✅ Rating trung bình
+            commentsCount: commentsCount, // ✅ Số lượng comments
           };
         });
 
@@ -129,14 +167,13 @@ export default function ProductsDisplaySection() {
   // Check if favorited
   const isFavorite = (id) => favorites.includes(id);
 
-  // ✅ TOGGLE FAVORITE - HIỂN THỊ NOTIFICATION NẾU CHƯA ĐĂNG NHẬP
+  // Toggle favorite
   const handleToggleFavorite = async (e, destinationId) => {
     e.preventDefault();
     e.stopPropagation();
 
-    // ✅ KIỂM TRA ĐĂNG NHẬP - HIỂN THỊ NOTIFICATION
     if (!user || !user.id) {
-      setShowLoginNotification(true); // ✅ HIỂN THỊ NOTIFICATION
+      setShowLoginNotification(true);
       return;
     }
 
@@ -338,10 +375,18 @@ export default function ProductsDisplaySection() {
     });
   };
 
-  // Destination Card Component
+  // ✅ DESTINATION CARD COMPONENT - CẬP NHẬT ĐỂ HIỂN THỊ COMMENTS
   const DestinationCard = ({ data }) => {
-    const { image, location, name, category, description, rating, reviews } =
-      data;
+    const {
+      image,
+      location,
+      name,
+      category,
+      description,
+      rating,
+      reviews,
+      commentsCount,
+    } = data;
 
     const categoryNames = {
       hotel: "Khách sạn",
@@ -381,7 +426,8 @@ export default function ProductsDisplaySection() {
           />
           <div className={styles.rating}>
             <Star className={styles.starIcon} size={14} />
-            <span>{rating}</span>
+            {/* ✅ Hiển thị 0 thay vì N/A */}
+            <span>{rating || 0}</span>
           </div>
 
           <button
@@ -416,11 +462,19 @@ export default function ProductsDisplaySection() {
           <p className={styles.description}>{description}</p>
 
           <div className={styles.footer}>
-            <div className={styles.reviews}>
-              <Star className={styles.reviewStar} size={12} />
-              <span>
-                {rating} ({reviews} đánh giá)
-              </span>
+            {/* ✅ HIỂN THỊ 0 THAY VÌ N/A */}
+            <div className={styles.statsContainer}>
+              <div className={styles.reviews}>
+                <Star className={styles.reviewStar} size={12} />
+                <span>
+                  {rating || 0} ({reviews || 0} đánh giá)
+                </span>
+              </div>
+
+              <div className={styles.commentsInfo}>
+                <MessageCircle className={styles.commentIcon} size={12} />
+                <span>{commentsCount || 0} bình luận</span>
+              </div>
             </div>
 
             <button
@@ -437,7 +491,6 @@ export default function ProductsDisplaySection() {
       </div>
     );
   };
-
   return (
     <section className={styles.section}>
       {/* Loading State */}
@@ -574,10 +627,10 @@ export default function ProductsDisplaySection() {
             </div>
           )}
 
-          {/* ✅ LOGIN NOTIFICATION - THÊM Ở CUỐI */}
+          {/* LOGIN NOTIFICATION */}
           {showLoginNotification && (
-            <LoginNotification 
-              onClose={() => setShowLoginNotification(false)} 
+            <LoginNotification
+              onClose={() => setShowLoginNotification(false)}
             />
           )}
         </>

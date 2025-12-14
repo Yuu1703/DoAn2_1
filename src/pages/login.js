@@ -31,8 +31,13 @@ export default function Login() {
       if (!res.ok) throw new Error(data.message || "Đăng nhập thất bại");
       // gọi /api/me để cập nhật context ngay
       await refresh();
-      // successful -> go to dashboard
-      router.push("/");
+      
+      // Check if user is admin and redirect accordingly
+      if (data.user && data.user.role === 'admin') {
+        router.push("/admin");
+      } else {
+        router.push("/");
+      }
     } catch (err) {
       setError(err.message);
     } finally {

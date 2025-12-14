@@ -36,7 +36,12 @@ export default async function handler(req, res) {
     // Optionally return some minimal info (no sensitive fields)
     return res.status(200).json({
       ok: true,
-      user: { id: userId, username: user.username, email: user.email },
+      user: { 
+        id: userId, 
+        username: user.username, 
+        email: user.email,
+        role: user.role || 'user'
+      },
     });
   } catch (err) {
     console.error(err);

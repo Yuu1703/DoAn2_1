@@ -94,6 +94,9 @@ export default function Header() {
                       .charAt(0)
                       .toUpperCase()}
                   </span>
+                  {user.warnings > 0 && (
+                    <span className={styles.warningBadge}>{user.warnings}</span>
+                  )}
                 </button>
                 {accountOpen && (
                   <div className={styles.dropdown} role="menu">
@@ -105,6 +108,17 @@ export default function Header() {
                         <div className={styles.userEmail}>{user.email}</div>
                       )}
                     </div>
+                    {user.warnings > 0 && (
+                      <div className={styles.warningNotification}>
+                        <div className={styles.warningIcon}>⚠️</div>
+                        <div className={styles.warningContent}>
+                          <div className={styles.warningTitle}>Cảnh báo từ Admin</div>
+                          <div className={styles.warningText}>
+                            Bạn đã bị cảnh báo {user.warnings} lần. Vui lòng tuân thủ quy định cộng đồng.
+                          </div>
+                        </div>
+                      </div>
+                    )}
                     <Link
                       href="/profile"
                       className={styles.menuItem}
@@ -113,6 +127,16 @@ export default function Header() {
                     >
                       Xem thông tin
                     </Link>
+                    {user.role === 'admin' && (
+                      <Link
+                        href="/admin"
+                        className={styles.menuItem}
+                        role="menuitem"
+                        onClick={() => setAccountOpen(false)}
+                      >
+                        🛡️ Admin Dashboard
+                      </Link>
+                    )}
                     <button
                       className={styles.menuItemDanger}
                       role="menuitem"

@@ -227,7 +227,35 @@ export default async function handler(req, res) {
       return res.status(200).json({ ok: true, data: updated });
     }
 
-    res.setHeader("Allow", ["GET", "PUT"]);
+    if (req.method === "DELETE") {
+      const col = db.collection("posts");
+
+      // Delete the post
+      const attempts = [
+        { filter: { _id }, note: "_id:ObjectId" },
+        ...(typeof id === "string"
+          ? [{ filter: { _id: id }, note: "_id:string" }]
+          : []),
+        ...(typeof id === "string"
+          ? [{ filter: { id }, note: "id:string" }]
+          : []),
+      ];
+
+      let deleted = 0;
+      for (const att of attempts) {
+        const resDel = await col.deleteOne(att.filter);
+        deleted += resDel.deletedCount || 0;
+        if (resDel.deletedCount) break;
+      }
+
+      if (!deleted) {
+        return res.status(404).json({ ok: false, message: "Post not found" });
+      }
+
+      return res.status(200).json({ ok: true, message: "Post deleted successfully" });
+    }
+
+    res.setHeader("Allow", ["GET", "PUT", "DELETE"]);
     return res.status(405).json({ ok: false, message: "Method Not Allowed" });
   } catch (err) {
     console.error("POSTS [id] handler error:", err);

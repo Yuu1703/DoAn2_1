@@ -63,12 +63,6 @@ export default function Header() {
             <Link href="/destinations" className={styles.navLink}>
               Điểm đến
             </Link>
-            <Link href="/reviews" className={styles.navLink}>
-              Đánh giá
-            </Link>
-            <Link href="/planner" className={styles.navLink}>
-              Lập kế hoạch
-            </Link>
             <Link href="/products" className={styles.navLink}>
               Sản phẩm
             </Link>
@@ -164,12 +158,6 @@ export default function Header() {
           <div id="mobile-navigation" className={styles.mobileNav}>
             <Link href="/destinations" className={styles.navLink}>
               Điểm đến
-            </Link>
-            <Link href="/reviews" className={styles.navLink}>
-              Đánh giá
-            </Link>
-            <Link href="/planner" className={styles.navLink}>
-              Lập kế hoạch
             </Link>
             <Link href="/products" className={styles.navLink}>
               Sản phẩm
